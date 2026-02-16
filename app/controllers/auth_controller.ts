@@ -31,10 +31,10 @@ export default class AuthController {
         return response.redirect('/')
     }
 
-    async showLogin({ view, response }: HttpContext) {
+    async showLogin({ view, response, session }: HttpContext) {
         const oidcConfig = (await import('#config/oidc')).default
         if (oidcConfig.enabled) {
-            return this.oidcRedirect({ response } as any)
+            return this.oidcRedirect({ response, session } as any)
         }
         return view.render('pages/login')
     }
@@ -68,6 +68,15 @@ export default class AuthController {
 
     async logout({ auth, response }: HttpContext) {
         await auth.use('web').logout()
+
+        const oidcConfig = (await import('#config/oidc')).default
+        if (oidcConfig.enabled) {
+            const logoutUrl = new URL(`${oidcConfig.issuer}/protocol/openid-connect/logout`)
+            logoutUrl.searchParams.set('post_logout_redirect_uri', oidcConfig.redirectUri!.replace('/auth/oidc/callback', '/'))
+            logoutUrl.searchParams.set('client_id', oidcConfig.clientId!)
+            return response.redirect(logoutUrl.href)
+        }
+
         return response.redirect('/')
     }
 
@@ -80,7 +89,8 @@ export default class AuthController {
         }
 
         // We know these are string because enabled is true
-        const server = await client.discovery(new URL(oidcConfig.issuer!), oidcConfig.clientId!, oidcConfig.clientSecret!)
+        const execute = oidcConfig.issuer!.startsWith('http://') ? [client.allowInsecureRequests] : []
+        const server = await client.discovery(new URL(oidcConfig.issuer!), oidcConfig.clientId!, oidcConfig.clientSecret!, undefined, { execute })
 
         const code_verifier = client.randomPKCECodeVerifier()
         const code_challenge = await client.calculatePKCECodeChallenge(code_verifier)
@@ -106,7 +116,8 @@ export default class AuthController {
         }
 
         try {
-            const server = await client.discovery(new URL(oidcConfig.issuer!), oidcConfig.clientId!, oidcConfig.clientSecret!)
+            const execute = oidcConfig.issuer!.startsWith('http://') ? [client.allowInsecureRequests] : []
+            const server = await client.discovery(new URL(oidcConfig.issuer!), oidcConfig.clientId!, oidcConfig.clientSecret!, undefined, { execute })
 
             const code_verifier = session.get('oidc_code_verifier')
             if (!code_verifier) {

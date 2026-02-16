@@ -22,7 +22,25 @@ export default class User extends BaseModel {
   declare email: string | null
 
   @column({ serializeAs: null })
-  declare password: string
+  declare password: string | null
+
+  @column()
+  declare sub: string | null
+
+  @column()
+  declare oidcIssuer: string | null
+
+  @column()
+  declare givenName: string | null
+
+  @column()
+  declare familyName: string | null
+
+  @column()
+  declare primaryAffiliation: string | null
+
+  @column()
+  declare upmCentre: string | null
 
   @column()
   declare curso: string | null
@@ -43,7 +61,7 @@ export default class User extends BaseModel {
 
   @beforeSave()
   static async hashPassword(user: User) {
-    if (user.$dirty.password) {
+    if (user.$dirty.password && user.password) {
       user.password = await hash.make(user.password)
     }
   }
