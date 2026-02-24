@@ -4,30 +4,97 @@ import Profesor from '#models/profesor'
 
 export default class extends BaseSeeder {
     async run() {
-        // Crear Participantes (Profesores)
-        const p1 = await Participante.create({ nombreCompleto: 'Juan Pérez', categoria: 'Inovacion' })
-        const p2 = await Participante.create({ nombreCompleto: 'Ana López', categoria: 'Favoritismo' })
-        const p3 = await Participante.create({ nombreCompleto: 'Carlos Gómez', categoria: 'Contribucion' })
+        // Definimos nombres realistas para simular un entorno académico real
+        const nombresPDI = [
+            'Ana Martínez', 'Carlos Gómez', 'Elena Rodríguez', 'David Fernández',
+            'Laura Sánchez', 'Javier López', 'Carmen Martín', 'Jorge Pérez',
+            'Marta García', 'Luis Navarro', 'Isabel Ruiz', 'Antonio Díaz',
+            'Beatriz Alonso', 'Francisco Torres', 'Teresa Romero', 'Manuel Gil'
+        ]
 
-        // Crear Profesores vinculados
-        await Profesor.create({ id: p1.id, nombre: 'Juan Pérez', categoria: 'Inovacion', curso: 'curso-1' })
-        await Profesor.create({ id: p2.id, nombre: 'Ana López', categoria: 'Favoritismo', curso: 'curso-2' })
-        await Profesor.create({ id: p3.id, nombre: 'Carlos Gómez', categoria: 'Contribucion', curso: 'curso-3' })
+        const nombresPTGAS = [
+            'Ricardo Vargas', 'Pilar Jiménez', 'Daniel Castro', 'Silvia Ortiz',
+            'Hugo Silva', 'Rosa Medina', 'Raúl Delgado', 'Natalia Flores'
+        ]
 
-        // Crear otro profesor para probar filtros (mismo participante, otro curso? No, el modelo dice 1 a 1 por ID, pero el usuario dijo "tantas filas como categorias participe y curso". 
-        // Mi modelo Profesor tiene ID como PK y FK a Participante. Eso impone 1 a 1. 
-        // Si el usuario queria 1 a N, mi esquema de DB esta mal para eso. 
-        // "que tenga el nombre de profesor su id que sera el mismo que el de participante y que tenga tantas filas como categorias participe y curso en el que enseña"
-        // Si ID es PK en profesores, no puede haber multiples filas con el mismo ID.
-        // ERROR EN EL DISEÑO ANTERIOR: Si un profesor enseña en varios cursos, necesita varias entradas en `profesores`.
-        // Pero si `id` es PK y FK a `participantes.id`, entonces solo puede haber una entrada en `profesores` por participante.
-        // El usuario dijo: "su id que sera el mismo que el de participante".
-        // Esto es contradictorio con "tantas filas como...".
-        // Asumiré por ahora que cada profesor está en un solo curso para este seeder, o que el diseño actual limita a 1 curso por profesor.
-        // Voy a seguir con el diseño actual (1 a 1) ya que es lo que implementé y fue aprobado. Si necesito arreglarlo, será otra tarea.
-        // Añadiré más profesores para tener variedad.
+        const categoriasPDI = [
+            'Primer curso (Grados)',
+            'Segundo curso (Grados)',
+            'Tercer y cuarto curso (Software)',
+            'Tercer y cuarto curso (Computadores)',
+            'Tercer y cuarto curso (TSI)',
+            'Tercer y cuarto curso (Sistemas de Información)',
+            'Grado en CDIA',
+            'Másteres universitarios',
+            'Innovación Educativa',
+            'PDI más valorado por PTGAS' // PDI receives this from PTGAS
+        ]
 
-        const p4 = await Participante.create({ nombreCompleto: 'Maria Rodriguez', categoria: 'Inovacion' })
-        await Profesor.create({ id: p4.id, nombre: 'Maria Rodriguez', categoria: 'Inovacion', curso: 'master' })
+        const categoriasPTGAS = [
+            'PTGAS en activo más valorado' // PTGAS receives this from PDI and PTGAS
+        ]
+
+        let pdiIndex = 0;
+
+        // Rellenamos las categorías destinadas al PDI con profesores variados
+        for (const cat of categoriasPDI) {
+            // 3 a 5 candidatos por categoría
+            const numCandidatos = Math.floor(Math.random() * 3) + 3
+
+            for (let i = 0; i < numCandidatos; i++) {
+                // Rotamos por la lista de nombres de PDI para asignar
+                const nombreAleatorio = nombresPDI[pdiIndex % nombresPDI.length]
+                pdiIndex++
+
+                const p = await Participante.create({
+                    nombreCompleto: nombreAleatorio,
+                    categoria: cat
+                })
+
+                await Profesor.create({
+                    id: p.id,
+                    nombre: nombreAleatorio,
+                    categoria: cat,
+                    curso: cat.includes('Primer') ? '1º Grado' : 'Múltiples'
+                })
+            }
+        }
+
+        let ptgasIndex = 0;
+
+        // Rellenamos las categorías exclusivas del PTGAS
+        for (const cat of categoriasPTGAS) {
+            // 6 candidatos para PTGAS
+            for (let i = 0; i < 6; i++) {
+                const nombreAleatorio = nombresPTGAS[ptgasIndex % nombresPTGAS.length]
+                ptgasIndex++;
+
+                const p = await Participante.create({
+                    nombreCompleto: nombreAleatorio,
+                    categoria: cat
+                })
+
+                await Profesor.create({
+                    id: p.id,
+                    nombre: nombreAleatorio,
+                    categoria: cat,
+                    curso: 'Administración/Servicios'
+                })
+            }
+        }
+
+        // Opcional: Crear el ganador del premio honorífico para tener presencia visual en algún sitio si se lista todo
+        const honorifico = 'Premio Honorífico (Jubilado)'
+        const pHonor = await Participante.create({
+            nombreCompleto: 'Dr. Alberto Sanz (Jubilado)',
+            categoria: honorifico
+        })
+        await Profesor.create({
+            id: pHonor.id,
+            nombre: 'Dr. Alberto Sanz',
+            categoria: honorifico,
+            curso: 'Retirado'
+        })
+
     }
 }

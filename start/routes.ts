@@ -33,8 +33,15 @@ router.group(() => {
     router.get('/mi-voto', [() => import('#controllers/users_controller'), 'myVote'])
 }).use(middleware.auth())
 
+// Admin specific login routes (unprotected by middleware.admin())
+router.get('/admin/login', [() => import('#controllers/admin_controller'), 'showLogin'])
+router.post('/admin/login', [() => import('#controllers/admin_controller'), 'login'])
+router.post('/admin/logout', [() => import('#controllers/admin_controller'), 'logout']).use(middleware.admin())
+
 // Admin protected routes
 router.group(() => {
+    router.get('/admin', [() => import('#controllers/admin_controller'), 'index'])
+
     router.get('/consultar-voto', [() => import('#controllers/users_controller'), 'check'])
     router.post('/consultar-voto', [() => import('#controllers/users_controller'), 'find'])
     router.get('/consultar-voto/:id', [() => import('#controllers/users_controller'), 'show'])

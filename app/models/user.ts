@@ -1,8 +1,8 @@
 
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, beforeSave } from '@adonisjs/lucid/orm'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import Participante from '#models/participante'
+import { BaseModel, column, hasMany, beforeSave } from '@adonisjs/lucid/orm'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
+import Vote from '#models/vote'
 import hash from '@adonisjs/core/services/hash'
 
 export default class User extends BaseModel {
@@ -28,7 +28,7 @@ export default class User extends BaseModel {
   declare curso: string | null
 
   @column()
-  declare votoParticipanteId: number | null
+  declare rol: string | null
 
   @column()
   declare mensaje: string | null
@@ -36,10 +36,8 @@ export default class User extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
-  @belongsTo(() => Participante, {
-    foreignKey: 'votoParticipanteId',
-  })
-  declare votoParticipante: BelongsTo<typeof Participante>
+  @hasMany(() => Vote)
+  declare votes: HasMany<typeof Vote>
 
   @beforeSave()
   static async hashPassword(user: User) {

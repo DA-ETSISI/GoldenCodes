@@ -6,7 +6,7 @@ export default class extends BaseSchema {
     async up() {
         this.schema.alterTable(this.tableName, (table) => {
             table.string('curso').nullable()
-            table.integer('voto_participante_id').unsigned().references('id').inTable('participantes').onDelete('SET NULL')
+            table.string('rol').nullable() // estudiante, pdi, ptgas
             table.text('mensaje').nullable()
         })
     }
@@ -14,7 +14,7 @@ export default class extends BaseSchema {
     async down() {
         this.schema.alterTable(this.tableName, (table) => {
             table.dropColumn('curso')
-            table.dropColumn('voto_participante_id')
+            table.dropColumn('rol')
             table.dropColumn('mensaje')
         })
     }
