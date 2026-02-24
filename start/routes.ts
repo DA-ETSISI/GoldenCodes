@@ -43,3 +43,6 @@ router.group(() => {
     router.post('/consultar-participante', [() => import('#controllers/users_controller'), 'findParticipant'])
     router.get('/consultar-participante/:id', [() => import('#controllers/users_controller'), 'showParticipant'])
 }).use(middleware.admin())
+
+// Results route (Public but time-restricted)
+router.get('/resultados', [() => import('#controllers/results_controller'), 'index'])

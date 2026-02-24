@@ -45,4 +45,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   OIDC_CLIENT_ID: Env.schema.string.optional(),
   OIDC_CLIENT_SECRET: Env.schema.string.optional(),
   OIDC_REDIRECT_URI: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring Voting
+  |----------------------------------------------------------
+  */
+  RESULTS_AVAILABLE_AT: Env.schema.string(),
 })

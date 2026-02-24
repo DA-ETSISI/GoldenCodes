@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "bbddgestor",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -71,5 +71,15 @@
       "./app/middleware/*.ts"
     ]
   },
-  "prettier": "@adonisjs/prettier-config"
+  "prettier": "@adonisjs/prettier-config",
+  "description": "Una aplicacion de gestion de bases de datos a priori mysql",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "no"
+  },
+  "author": "David"
 }
