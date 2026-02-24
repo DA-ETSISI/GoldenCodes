@@ -1,0 +1,23 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: goldencodes_db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: app
+      MARIADB_USER: goldencodes
+      MARIADB_PASSWORD: goldencodes
+    ports:
+      - "3306:3306"
+    volumes:
+      - goldencodes_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  goldencodes_db_data:
