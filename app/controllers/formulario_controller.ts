@@ -1,5 +1,4 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Profesor from '#models/profesor'
 import Participante from '#models/participante'
 import Vote from '#models/vote'
 
@@ -13,10 +12,8 @@ export default class FormularioController {
       await user.save()
     }
 
-    // Fetch all profesores (which are the votable options)
-    // In our model, "Profesor" maps to the options, even if they are PTGAS.
-    // The seeder must populate them correctly.
-    const profesores = await Profesor.all()
+    // Fetch all participantes (which are the votable options).
+    const profesores = await Participante.all()
 
     // Fetch user's existing votes
     const userVotes = await Vote.query().where('userId', user.id).preload('participante')
@@ -56,7 +53,7 @@ export default class FormularioController {
       return response.redirect().back()
     }
 
-    const profesor = await Profesor.find(profesorId)
+    const profesor = await Participante.find(profesorId)
     if (!profesor) {
       session.flash('error', 'Candidato no válido.')
       return response.redirect().back()
@@ -77,7 +74,6 @@ export default class FormularioController {
       'Innovación Educativa': { roles: ['Estudiante', 'PDI'], max: 1 },
       'PDI más valorado por PTGAS': { roles: ['PTGAS'], max: 5 },
       'PTGAS en activo más valorado': { roles: ['PDI', 'PTGAS'], max: 5 },
-      'Premio Honorífico (Jubilado)': { roles: ['Estudiante', 'PDI', 'PTGAS'], max: 1 },
     }
 
     const rule = limits[categoria]

@@ -258,9 +258,6 @@
             "Reconocimiento PTGAS": [
                 { name: "PDI más valorado por PTGAS", roles: ["PTGAS"], max: 5, filter: "PDI" },
                 { name: "PTGAS en activo más valorado", roles: ["PDI", "PTGAS"], max: 5, filter: "PTGAS" }
-            ],
-            "Premio Honorífico": [
-                { name: "Premio Honorífico (Jubilado)", roles: ["Estudiante", "PDI", "PTGAS"], max: 1, filter: "Jubilado" }
             ]
         };
 
@@ -385,10 +382,10 @@
                 selectProfesor.innerHTML = '<option value="" disabled selected>Elige a un candidato</option>';
                 selectProfesor.disabled = false;
                 
-                allProfesores.filter(p => p.categoria === catName).sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(p => {
+                allProfesores.filter(p => p.categoria === catName).sort((a,b) => (a.nombreCompleto ?? a.nombre_completo ?? '').localeCompare(b.nombreCompleto ?? b.nombre_completo ?? '')).forEach(p => {
                     const option = document.createElement("option");
                     option.value = p.id;
-                    option.textContent = p.nombre;
+                    option.textContent = p.nombreCompleto ?? p.nombre_completo;
                     selectProfesor.appendChild(option);
                 });
             });
