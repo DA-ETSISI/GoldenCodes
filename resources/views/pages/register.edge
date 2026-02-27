@@ -448,17 +448,17 @@
                 <!-- Cuerpo -->
                 <div class="register-card-body">
 
-                    @if(session.has('error'))
+                    @if(flashMessages.has('error'))
                         <div class="alert alert-danger" role="alert">
                             <i class="fa-solid fa-circle-exclamation"></i>
-                            <span>{{ session.get('error') }}</span>
+                            <span>{{ flashMessages.get('error') }}</span>
                         </div>
                     @endif
 
-                    @if(session.has('success'))
+                    @if(flashMessages.has('success'))
                         <div class="alert alert-success" role="alert">
                             <i class="fa-solid fa-circle-check"></i>
-                            <span>{{ session.get('success') }}</span>
+                            <span>{{ flashMessages.get('success') }}</span>
                         </div>
                     @endif
 
@@ -564,16 +564,16 @@
         }
 
         // ─── Show flash messages as toasts ──────────────────────────────
-        @if(session.has('error'))
-            showToast(`{{ session.get('error') }}`, 'error');
+        @if(flashMessages.has('error'))
+            showToast(`{{ flashMessages.get('error') }}`, 'error');
             document.querySelectorAll('.input-group').forEach(g => {
                 g.classList.add('input-error', 'shake');
                 g.addEventListener('animationend', () => g.classList.remove('shake'), { once: true });
             });
         @endif
 
-        @if(session.has('success'))
-            showToast(`{{ session.get('success') }}`, 'success');
+        @if(flashMessages.has('success'))
+            showToast(`{{ flashMessages.get('success') }}`, 'success');
         @endif
 
         // ─── Password toggle ─────────────────────────────────────────────

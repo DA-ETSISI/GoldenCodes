@@ -25,9 +25,9 @@
                     <div class="card p-5 shadow-lg">
                         <h2 class="text-center mb-4">Consultar Voto</h2>
                         
-                        @if(session.has('error'))
+                        @if(flashMessages.has('error'))
                             <div class="alert alert-danger">
-                                {{ session.get('error') }}
+                                {{ flashMessages.get('error') }}
                             </div>
                         @endif
 

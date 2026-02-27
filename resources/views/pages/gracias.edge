@@ -31,10 +31,10 @@
                         
                         <p class="lead mb-4">Tu participación es muy importante para nosotros.</p>
 
-                        @if(session.has('votedFor'))
+                        @if(flashMessages.has('votedFor'))
                             <div class="alert alert-success py-4 mb-4">
                                 <h4 class="alert-heading mb-2">Has votado correctamente por:</h4>
-                                <p class="display-6 fw-bold mb-0">{{ session.get('votedFor') }}</p>
+                                <p class="display-6 fw-bold mb-0">{{ flashMessages.get('votedFor') }}</p>
                             </div>
                         @endif
 
