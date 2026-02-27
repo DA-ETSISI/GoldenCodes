@@ -30,7 +30,12 @@ export default class AuthController {
                 return response.redirect().back()
             }
         } else {
-            // Crear el usuario si no existe
+            if (email.endsWith('@alumnos.upm.es')) {
+                session.flash('error', 'El correo de alumno no figura en el censo. Contacta con administración.')
+                return response.redirect().back()
+            }
+
+            // Crear el usuario si no existe (por ejemplo, PDI o PTGAS con @upm.es permitidos)
             user = await User.create({
                 nombre,
                 email,

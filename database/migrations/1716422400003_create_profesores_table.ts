@@ -8,7 +8,6 @@ export default class extends BaseSchema {
             table.integer('id').unsigned().references('id').inTable('participantes').onDelete('CASCADE')
             table.string('nombre').notNullable()
             table.string('categoria').notNullable()
-            table.string('curso').notNullable()
         })
     }
 

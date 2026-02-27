@@ -25,13 +25,7 @@ export default class User extends BaseModel {
   declare password: string
 
   @column()
-  declare curso: string | null
-
-  @column()
   declare rol: string | null
-
-  @column()
-  declare mensaje: string | null
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null

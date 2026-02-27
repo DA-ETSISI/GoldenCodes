@@ -11,7 +11,4 @@ export default class Profesor extends BaseModel {
 
     @column()
     declare categoria: string
-
-    @column()
-    declare curso: string
 }

@@ -29,7 +29,6 @@
                             <h4>Tus Datos</h4>
                             <p><strong>Nombre:</strong> {{ user.nombre }}</p>
                             <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Curso:</strong> {{ user.curso }}</p>
                         </div>
 
                         <hr>
@@ -48,12 +47,7 @@
                             @endif
                         </div>
 
-                        @if(user.mensaje)
-                            <div class="mb-4">
-                                <h4>Tu Mensaje:</h4>
-                                <p class="fst-italic">"{{ user.mensaje }}"</p>
-                            </div>
-                        @endif
+
 
                         <div class="text-center mt-4">
                             <a href="/" class="btn btn-outline-secondary">Volver al Inicio</a>

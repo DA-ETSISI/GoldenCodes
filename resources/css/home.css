@@ -16,7 +16,10 @@ body {
     overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: 'Playfair Display', serif;
     color: var(--color-oro);
 }
@@ -28,7 +31,8 @@ h1, h2, h3, h4 {
     transition: background-color 0.3s ease;
 }
 
-.navbar-brand, .nav-link {
+.navbar-brand,
+.nav-link {
     color: var(--color-oro) !important;
     font-weight: 500;
 }
@@ -108,8 +112,10 @@ section {
 }
 
 .card-text {
-    color: var(--color-texto-claro);
-    font-weight: 300;
+    color: #e8d47a;
+    font-size: 0.95rem;
+    font-weight: 400;
+    opacity: 1;
 }
 
 .card i {

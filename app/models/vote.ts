@@ -17,9 +17,6 @@ export default class Vote extends BaseModel {
   @column()
   declare categoria: string
 
-  @column()
-  declare mensaje: string | null
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
