@@ -10,24 +10,38 @@ export default class AuthController {
     async register({ request, response, auth, session }: HttpContext) {
         const { nombre, email, password } = request.all()
 
-        // Validar que el email no esté registrado
-        const existingUser = await User.findBy('email', email)
-        if (existingUser) {
-            session.flash('error', 'Este correo electrónico ya está registrado.')
+        // Validar dominio del email
+        const esEmailValido = email.endsWith('@upm.es') || email.endsWith('@alumnos.upm.es')
+        if (!esEmailValido) {
+            session.flash('error', 'Solo se permiten correos @upm.es o @alumnos.upm.es.')
             return response.redirect().back()
         }
 
-        // Crear el usuario
-        const user = await User.create({
-            nombre,
-            email,
-            password,
-        })
+        // Validar que el email no esté registrado o actualizar si ya existe alumno
+        let user = await User.findBy('email', email)
+        if (user) {
+            if (email.endsWith('@alumnos.upm.es')) {
+                // Si es un alumno que ya existía en bbdd, reclamará su cuenta sobrescribiendo la contraseña
+                user.password = password
+                await user.save()
+                session.flash('success', 'Cuenta reclamada: Contraseña actualizada correctamente. ¡Bienvenido!')
+            } else {
+                session.flash('error', 'Este correo electrónico ya está registrado.')
+                return response.redirect().back()
+            }
+        } else {
+            // Crear el usuario si no existe
+            user = await User.create({
+                nombre,
+                email,
+                password,
+            })
+            session.flash('success', '¡Registro exitoso! Bienvenido.')
+        }
 
         // Autenticar automáticamente
         await auth.use('web').login(user)
 
-        session.flash('success', '¡Registro exitoso! Bienvenido.')
         return response.redirect('/')
     }
 
