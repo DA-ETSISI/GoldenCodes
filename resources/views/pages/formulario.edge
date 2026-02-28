@@ -1,400 +1,535 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haz tu voto - GoldenCodes</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Haz tu voto - GoldenCodes
+    </title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/css/app.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
 
     <style>
-        body { padding-top: 36px; }
-        .category-card { transition: transform 0.2s; cursor: pointer; border-left: 5px solid #ffc107; }
-        .category-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,.1); }
-        .vote-item { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 10px; border: 1px solid #dee2e6; }
+      body {
+        padding-top: 36px;
+      }
+      
+      .category-card {
+        transition: transform 0.2s;
+        cursor: pointer;
+        border-left: 5px solid #ffc107;
+      }
+      
+      .category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,.1);
+      }
+      
+      .vote-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid #dee2e6;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- NAVEGACIÓN -->
     <nav class="navbar navbar-expand-lg fixed-top py-3">
-        <div class="container">
-            <a class="navbar-brand fs-4" href="/">
-                <i class="fa-solid fa-trophy me-2"></i> GoldenCodes
+      <div class="container">
+        <a class="navbar-brand fs-4" href="/">
+          <i class="fa-solid fa-trophy me-2"></i>GoldenCodes
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-                        <a class="btn btn-voto px-4 py-2" href="/">
-                            <i class="fa-solid fa-arrow-left me-2"></i> Volver a la Gala
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+              <a class="btn btn-voto px-4 py-2" href="/">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver a la Gala
                         </a>
-                    </li>
-                    @if(user)
-                        <li class="nav-item dropdown ms-lg-3">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fa-solid fa-user me-1"></i> {{ user.nombre }}
+            </li>
+            @if(user)
+              <li class="nav-item dropdown ms-lg-3">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-user me-1"></i>{{ user.nombre }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><h6 class="dropdown-header">{{ user.email }}</h6></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="/logout" method="POST">
-                                        {{ csrfField() }}
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <h6 class="dropdown-header">
+                      {{ user.email }}
+                    </h6>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <form action="/logout" method="POST">
+                      {{ csrfField() }}
                                         <button type="submit" class="dropdown-item">
-                                            <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>Cerrar Sesión
                                         </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
+                    </form>
+                  </li>
                 </ul>
-            </div>
+              </li>
+            @endif
+          </ul>
         </div>
+      </div>
     </nav>
 
     <section id="votacion" class="py-5 mt-5" style="min-height: calc(100vh - 72px);">
-        <div class="container">
-            <h2 class="text-center display-4 mb-5">
-                <i class="fa-solid fa-ranking-star me-2"></i> Panel de Votación
-            </h2>
+      <div class="container">
+        <h2 class="text-center display-4 mb-5">
+          <i class="fa-solid fa-ranking-star me-2"></i>Panel de Votación
+        </h2>
 
-            <!-- Mensajes Flash -->
-            @if(flashMessages.has('error'))
-                <div class="alert alert-danger alert-dismissible fade show">
-                    {{ flashMessages.get('error') }}
+        <!-- Mensajes Flash -->
+        @if(flashMessages.has('error'))
+          <div class="alert alert-danger alert-dismissible fade show">
+            {{ flashMessages.get('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
-            @if(flashMessages.has('success'))
-                <div class="alert alert-success alert-dismissible fade show">
-                    {{ flashMessages.get('success') }}
+          </div>
+        @endif
+        @if(flashMessages.has('success'))
+          <div class="alert alert-success alert-dismissible fade show">
+            {{ flashMessages.get('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+          </div>
+        @endif
+        
+        <div class="row">
+          <!-- Columna Izquierda: Perfil y Votos Realizados -->
+          <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm mb-4 border-0">
+              <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                  <i class="fa-solid fa-user-circle me-2"></i>Tu Perfil
+                </h5>
+              </div>
+              <div class="card-body">
+                <p>
+                  <strong>Nombre:</strong>{{ user.nombre }}
+                </p>
+                <p>
+                  <strong>Email:</strong>{{ user.email }}
+                </p>
 
-            <div class="row">
-                <!-- Columna Izquierda: Perfil y Votos Realizados -->
-                <div class="col-lg-4 mb-4">
-                    <div class="card shadow-sm mb-4 border-0">
-                        <div class="card-header bg-dark text-white">
-                            <h5 class="mb-0"><i class="fa-solid fa-user-circle me-2"></i> Tu Perfil</h5>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Nombre:</strong> {{ user.nombre }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            
-                            @if(user.rol)
-                                <p><strong>Perfil:</strong> <span class="badge bg-warning text-dark fs-6">{{ user.rol }}</span></p>
-                                <hr>
-                                <h6>Tus votos registrados ({{ userVotes.length }}):</h6>
-                                @if(userVotes.length > 0)
-                                    <ul class="list-group list-group-flush small">
-                                    @each(v in userVotes)
-                                        <li class="list-group-item px-0">
-                                            <strong>{{ v.categoria }}:</strong><br>
-                                            <span class="text-muted"><i class="fa-solid fa-check text-success"></i> 
-                                              @if(v.participante)
-                                                {{ v.participante.nombreCompleto }}
-                                              @else
-                                                ID: {{ v.participanteId }}
-                                              @endif
-                                            </span>
-                                        </li>
-                                    @endeach
-                                    </ul>
-                                @else
-                                    <p class="text-muted small">Aún no has votado en ninguna categoría.</p>
-                                @endif
+                @if(user.rol)
+                  <p>
+                    <strong>Perfil:</strong>                    <span class="badge bg-warning text-dark fs-6">{{ user.rol }}</span>
+                  </p>
+                  <hr />
+                  <h6>
+                    Tus votos registrados ({{ userVotes.length }}):
+                  </h6>
+                  @if(userVotes.length > 0)
+                    <ul class="list-group list-group-flush small">
+                      @each(v in userVotes)
+                        <li class="list-group-item px-0">
+                          <strong>{{ v.categoria }}:</strong>                          <br />
+                          <span class="text-muted">                            <i class="fa-solid fa-check text-success"></i>
+                            @if(v.participante)
+                              {{ v.participante.nombreCompleto }}
                             @else
-                                <div class="alert alert-warning py-2 small">
-                                    Debes configurar tu perfil antes de votar. Completa los datos en el formulario principal.
-                                </div>
+                              ID: {{ v.participanteId }}
                             @endif
-                        </div>
-                    </div>
-                    
-                    @if(user.rol)
-                    <div class="alert alert-info small">
-                        <strong>Recuerda:</strong> 
-                        Según las bases, puedes votar hasta 3 veces en categorías docentes, 1 vez en Innovación Educativa y 5 veces en PTGAS/PDI por PTGAS según corresponda tu perfil. No puedes votar a la misma persona dos veces en una categoría.
-                    </div>
-                    @endif
-                </div>
-
-                <!-- Columna Derecha: Formulario de Votación -->
-                <div class="col-lg-8">
-                    @if(!user.rol)
-                        <!-- Configurar Perfil Inicial -->
-                        <div class="card shadow border-0" id="setup-profile">
-                            <div class="card-header bg-warning">
-                                <h5 class="mb-0 text-dark"><i class="fa-solid fa-gear me-2"></i> Configuración Inicial</h5>
-                            </div>
-                            <div class="card-body p-4">
-                                <p>Antes de comenzar, dinos a qué colectivo perteneces para mostrarte las categorías correspondientes.</p>
-                                <form id="rol-form">
-                                    <div class="mb-3">
-                                        <label class="form-label">Perfil / Colectivo</label>
-                                        <select id="user-rol" class="form-select" required>
-                                            <option value="" disabled selected>Selecciona una opción</option>
-                                            <option value="PDI">Personal Docente e Investigador (PDI)</option>
-                                            <option value="PTGAS">Personal Técnico, de Gestión y Administración (PTGAS)</option>
-                                            <option value="Estudiante">Estudiante</option>
-                                        </select>
-                                    </div>
-                                    <button type="button" class="btn btn-dark w-100" id="btn-save-rol">
-                                        Aplicar y Empezar a Votar
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        
-                        <!-- Contenedor general de votación que se mostrará para nuevos usuarios tras elegir su rol -->
-                        <div class="card shadow border-0" id="main-voting-area" style="display:none;">
-                            <form action="/votacion" method="POST" id="main-form" class="p-4 rounded border-top border-5 border-warning">
-                                {{ csrfField() }}
-                                <!-- Campos ocultos para enviar rol si se acaba de configurar -->
-                                <input type="hidden" name="rol" id="hidden-rol">
-                                
-                                <h4 class="mb-3">Selecciona tu voto</h4>
-                                
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Categoría Principal</label>
-                                    <select id="main-cat-select" class="form-select select-lg" required>
-                                        <option value="" disabled selected>Elige un grupo de premios</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-4" id="subcat-container" style="display:none;">
-                                    <label class="form-label fw-bold text-warning">Curso / Variante</label>
-                                    <select name="categoria" id="categoria-select" class="form-select" required disabled>
-                                        <option value="" disabled selected>Primero elige un grupo</option>
-                                        <!-- Opciones dinámicas en JS -->
-                                    </select>
-                                    <div id="cat-help" class="form-text text-muted mt-2"></div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Candidato / Docente</label>
-                                    <select name="profesor" id="profesor-select" class="form-select" required disabled>
-                                        <option value="" disabled selected>Primero elige una variante</option>
-                                    </select>
-                                </div>
-
-                                <button type="submit" id="btn-submit-vote" class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm">
-                                    <i class="fa-solid fa-paper-plane me-2"></i> Emitir Voto
-                                </button>
-                            </form>
-                        </div>
-
-                    @else
-                        <!-- Formulario de Votación directo para usuarios ya configurados -->
-                        <div class="card shadow border-0" id="main-voting-area">
-                            <form action="/votacion" method="POST" id="main-form" class="p-4 rounded border-top border-5 border-warning">
-                                {{ csrfField() }}
-                                
-                                <h4 class="mb-3">Emite un nuevo voto</h4>
-                                
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Categoría Principal</label>
-                                    <select id="main-cat-select" class="form-select select-lg" required>
-                                        <option value="" disabled selected>Elige un grupo de premios</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-4" id="subcat-container" style="display:none;">
-                                    <label class="form-label fw-bold text-warning">Curso / Variante</label>
-                                    <select name="categoria" id="categoria-select" class="form-select" required disabled>
-                                        <option value="" disabled selected>Primero elige un grupo</option>
-                                    </select>
-                                    <div id="cat-help" class="form-text text-muted mt-2"></div>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Candidato / Docente</label>
-                                    <select name="profesor" id="profesor-select" class="form-select" required disabled>
-                                        <option value="" disabled selected>Primero elige una variante</option>
-                                    </select>
-                                </div>
-
-                                <button type="submit" id="btn-submit-vote" class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm">
-                                    <i class="fa-solid fa-paper-plane me-2"></i> Emitir Voto
-                                </button>
-                            </form>
-                        </div>
-                    @endif
-                </div>
+                          </span>
+                        </li>
+                      @endeach
+                    </ul>
+                  @else
+                    <p class="text-muted small">
+                      Aún no has votado en ninguna categoría.
+                    </p>
+                  @endif
+                @else
+                  <div class="alert alert-warning py-2 small">
+                    Debes configurar tu perfil antes de votar. Completa los datos en el formulario principal.
+                  </div>
+                @endif
+              </div>
             </div>
+
+            @if(user.rol)
+              <div class="alert alert-info small">
+                <strong>Recuerda:</strong>
+                Según las bases, puedes votar hasta 3 veces en categorías docentes, 1 vez en Innovación Educativa y 5 veces en PTGAS/PDI por PTGAS según corresponda tu perfil. No puedes votar a la misma persona dos veces en una categoría.
+              </div>
+            @endif
+          </div>
+
+          <!-- Columna Derecha: Formulario de Votación -->
+          <div class="col-lg-8">
+            @if(!user.rol)
+              <!-- Configurar Perfil Inicial -->
+              <div class="card shadow border-0" id="setup-profile">
+                <div class="card-header bg-warning">
+                  <h5 class="mb-0 text-dark">
+                    <i class="fa-solid fa-gear me-2"></i>Configuración Inicial
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <p>
+                    Antes de comenzar, dinos a qué colectivo perteneces para mostrarte las categorías correspondientes.
+                  </p>
+                  <form id="rol-form">
+                    <div class="mb-3">
+                      <label class="form-label">Perfil / Colectivo</label>
+                      <select id="user-rol" class="form-select" required>
+                        <option value="" disabled selected>
+                          Selecciona una opción
+                        </option>
+                        <option value="PDI">
+                          Personal Docente e Investigador (PDI)
+                        </option>
+                        <option value="PTGAS">
+                          Personal Técnico, de Gestión y Administración (PTGAS)
+                        </option>
+                        <option value="Estudiante">
+                          Estudiante
+                        </option>
+                      </select>
+                    </div>
+                    <button type="button" class="btn btn-dark w-100" id="btn-save-rol">
+                      Aplicar y Empezar a Votar
+                                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Contenedor general de votación que se mostrará para nuevos usuarios tras elegir su rol -->
+              <div class="card shadow border-0" id="main-voting-area" style="display:none;">
+                <form
+                  action="/votacion"
+                  method="POST"
+                  id="main-form"
+                  class="p-4 rounded border-top border-5 border-warning"
+                >
+                  {{ csrfField() }}
+                  <!-- Campos ocultos para enviar rol si se acaba de configurar -->
+                  <input type="hidden" name="rol" id="hidden-rol" />
+
+                  <h4 class="mb-3">
+                    Selecciona tu voto
+                  </h4>
+
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Categoría Principal</label>
+                    <select id="main-cat-select" class="form-select select-lg" required>
+                      <option value="" disabled selected>
+                        Elige un grupo de premios
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="mb-4" id="subcat-container" style="display:none;">
+                    <label class="form-label fw-bold text-warning">Curso / Variante</label>
+                    <select name="categoria" id="categoria-select" class="form-select" required disabled>
+                      <option value="" disabled selected>
+                        Primero elige un grupo
+                      </option>
+                      <!-- Opciones dinámicas en JS -->
+                    </select>
+                    <div id="cat-help" class="form-text text-muted mt-2">
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Candidato / Docente</label>
+                    <select name="profesor" id="profesor-select" class="form-select" required disabled>
+                      <option value="" disabled selected>
+                        Primero elige una variante
+                      </option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    id="btn-submit-vote"
+                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm"
+                  >
+                    <i class="fa-solid fa-paper-plane me-2"></i>Emitir Voto
+                                </button>
+                </form>
+              </div>
+
+            @else
+              <!-- Formulario de Votación directo para usuarios ya configurados -->
+              <div class="card shadow border-0" id="main-voting-area">
+                <form
+                  action="/votacion"
+                  method="POST"
+                  id="main-form"
+                  class="p-4 rounded border-top border-5 border-warning"
+                >
+                  {{ csrfField() }}
+                  <h4 class="mb-3">
+                    Emite un nuevo voto
+                  </h4>
+
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Categoría Principal</label>
+                    <select id="main-cat-select" class="form-select select-lg" required>
+                      <option value="" disabled selected>
+                        Elige un grupo de premios
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="mb-4" id="subcat-container" style="display:none;">
+                    <label class="form-label fw-bold text-warning">Curso / Variante</label>
+                    <select name="categoria" id="categoria-select" class="form-select" required disabled>
+                      <option value="" disabled selected>
+                        Primero elige un grupo
+                      </option>
+                    </select>
+                    <div id="cat-help" class="form-text text-muted mt-2">
+                    </div>
+                  </div>
+
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Candidato / Docente</label>
+                    <select name="profesor" id="profesor-select" class="form-select" required disabled>
+                      <option value="" disabled selected>
+                        Primero elige una variante
+                      </option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    id="btn-submit-vote"
+                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm"
+                  >
+                    <i class="fa-solid fa-paper-plane me-2"></i>Emitir Voto
+                                </button>
+                </form>
+              </div>
+            @endif
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Modal JS Data -->
     <script>
-        const userRol = "{{ user.rol || '' }}";
-        const allProfesores = {{{ JSON.stringify(profesores) }}};
-        const votesByCategory = {{{ JSON.stringify(votesByCategory) }}};
-        
-        // Define Hierarchy
-        const groupsData = {
-            "Mérito Docente": [
-                { name: "Primer curso (Grados)", roles: ["Estudiante"], max: 3, filter: "Primer curso (Grados)" },
-                { name: "Segundo curso (Grados)", roles: ["Estudiante"], max: 3, filter: "Segundo curso (Grados)" },
-                { name: "Tercer y cuarto curso (Software)", roles: ["Estudiante"], max: 3, filter: "Software" },
-                { name: "Tercer y cuarto curso (Computadores)", roles: ["Estudiante"], max: 3, filter: "Computadores" },
-                { name: "Tercer y cuarto curso (TSI)", roles: ["Estudiante"], max: 3, filter: "TSI" },
-                { name: "Tercer y cuarto curso (Sistemas de Información)", roles: ["Estudiante"], max: 3, filter: "Sistemas de Información" },
-                { name: "Grado en CDIA", roles: ["Estudiante"], max: 3, filter: "CDIA" },
-                { name: "Másteres universitarios", roles: ["Estudiante"], max: 3, filter: "Master" }
-            ],
-            "Innovación Educativa": [
-                { name: "Innovación Educativa", roles: ["Estudiante", "PDI"], max: 1, filter: "Innovación" }
-            ],
-            "Reconocimiento PTGAS": [
-                { name: "PDI más valorado por PTGAS", roles: ["PTGAS"], max: 5, filter: "PDI" },
-                { name: "PTGAS en activo más valorado", roles: ["PDI", "PTGAS"], max: 5, filter: "PTGAS" }
-            ],
-            "Especiales / Otros": [
-                { name: "Premio Honorífico", roles: ["Estudiante", "PDI", "PTGAS"], max: 1, filter: "Honorífico" }
-            ]
-        };
+      const userRol = "{{ user.rol || '' }}";
 
-        // Element references
-        const selectRol = document.getElementById("user-rol");
-        const btnSaveRol = document.getElementById("btn-save-rol");
-        const mainVotingArea = document.getElementById("main-voting-area");
-        const setupProfileArea = document.getElementById("setup-profile");
-        const selectMainCat = document.getElementById("main-cat-select");
-        const selectCategoria = document.getElementById("categoria-select");
-        const selectProfesor = document.getElementById("profesor-select");
-        const subcatContainer = document.getElementById("subcat-container");
-        const hiddenRol = document.getElementById("hidden-rol");
-        const catHelp = document.getElementById("cat-help");
-        const btnSubmitVote = document.getElementById("btn-submit-vote");
+      const allProfesores = {{{ JSON.stringify(profesores) }}};
 
-        // Helper to populate main categories
-        function populateMainCategories(rol) {
-            if(!selectMainCat) return;
-            selectMainCat.innerHTML = '<option value="" disabled selected>Elige un grupo de premios</option>';
-            
-            Object.keys(groupsData).forEach(groupName => {
-                // Check if user role has at least ONE subcategory in this group
-                const hasAccess = groupsData[groupName].some(cat => cat.roles.includes(rol));
-                if (hasAccess) {
-                    const option = document.createElement("option");
-                    option.value = groupName;
-                    option.textContent = groupName;
-                    selectMainCat.appendChild(option);
-                }
-            });
+      const votesByCategory = {{{ JSON.stringify(votesByCategory) }}};
+      // Define Hierarchy
+
+      const groupsData = {
+        "Mérito Docente": [ {
+          name: "Primer curso (Grados)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Primer curso (Grados)"
+        }, {
+          name: "Segundo curso (Grados)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Segundo curso (Grados)"
+        }, {
+          name: "Tercer y cuarto curso (Software)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Software"
+        }, {
+          name: "Tercer y cuarto curso (Computadores)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Computadores"
+        }, {
+          name: "Tercer y cuarto curso (TSI)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "TSI"
+        }, {
+          name: "Tercer y cuarto curso (Sistemas de Información)",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Sistemas de Información"
+        }, {
+          name: "Grado en CDIA",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "CDIA"
+        }, {
+          name: "Másteres universitarios",
+          roles: [ "Estudiante" ],
+          max: 3,
+          filter: "Master"
+        } ],
+        "Innovación Educativa": [ {
+          name: "Innovación Educativa",
+          roles: [ "Estudiante", "PDI" ],
+          max: 1,
+          filter: "Innovación"
+        } ],
+        "Reconocimiento PTGAS": [ {
+          name: "PDI más valorado por PTGAS",
+          roles: [ "PTGAS" ],
+          max: 5,
+          filter: "PDI"
+        }, {
+          name: "PTGAS en activo más valorado",
+          roles: [ "PDI", "PTGAS" ],
+          max: 5,
+          filter: "PTGAS"
+        } ],
+        "Especiales / Otros": [ {
+          name: "Premio Honorífico",
+          roles: [ "Estudiante", "PDI", "PTGAS" ],
+          max: 1,
+          filter: "Honorífico"
+        } ]
+      };
+      // Element references
+
+      const selectRol = document.getElementById("user-rol");
+
+      const btnSaveRol = document.getElementById("btn-save-rol");
+
+      const mainVotingArea = document.getElementById("main-voting-area");
+
+      const setupProfileArea = document.getElementById("setup-profile");
+
+      const selectMainCat = document.getElementById("main-cat-select");
+
+      const selectCategoria = document.getElementById("categoria-select");
+
+      const selectProfesor = document.getElementById("profesor-select");
+
+      const subcatContainer = document.getElementById("subcat-container");
+
+      const hiddenRol = document.getElementById("hidden-rol");
+
+      const catHelp = document.getElementById("cat-help");
+
+      const btnSubmitVote = document.getElementById("btn-submit-vote");
+      // Helper to populate main categories
+
+      function populateMainCategories(rol) {
+        if (!selectMainCat) return;
+        selectMainCat.innerHTML = '<option value="" disabled selected>Elige un grupo de premios</option>';
+        Object.keys(groupsData).forEach(groupName => {
+          // Check if user role has at least ONE subcategory in this group
+          const hasAccess = groupsData[groupName].some(cat => cat.roles.includes(rol));
+          if (hasAccess) {
+            const option = document.createElement("option");
+            option.value = groupName;
+            option.textContent = groupName;
+            selectMainCat.appendChild(option);
+          }
+        });
+      }
+      // Populates subcategories when a main category is chosen
+
+      function populateSubCategories(groupName, rol) {
+        if (!selectCategoria) return;
+        selectCategoria.innerHTML = '<option value="" disabled selected>Elige un curso o variante</option>';
+        selectCategoria.disabled = false;
+        subcatContainer.style.display = "block";
+        const subcats = groupsData[groupName];
+        // Calculate aggregate used votes if it's the "Mérito Docente" group
+        let aggregateUsed = 0;
+        if (groupName === "Mérito Docente") {
+          subcats.forEach(cat => {
+            aggregateUsed += votesByCategory[cat.name] || 0;
+          });
         }
-
-        // Populates subcategories when a main category is chosen
-        function populateSubCategories(groupName, rol) {
-            if(!selectCategoria) return;
-            selectCategoria.innerHTML = '<option value="" disabled selected>Elige un curso o variante</option>';
-            selectCategoria.disabled = false;
-            subcatContainer.style.display = 'block';
-            
-            const subcats = groupsData[groupName];
-            
-            // Calculate aggregate used votes if it's the "Mérito Docente" group
-            let aggregateUsed = 0;
-            if (groupName === "Mérito Docente") {
-                subcats.forEach(cat => {
-                    aggregateUsed += votesByCategory[cat.name] || 0;
-                });
+        subcats.forEach(cat => {
+          if (cat.roles.includes(rol)) {
+            const option = document.createElement("option");
+            option.value = cat.name;
+            const used = groupName === "Mérito Docente" ? aggregateUsed : votesByCategory[cat.name] || 0;
+            const remaining = cat.max - used;
+            if (remaining <= 0) {
+              option.textContent = `${cat.name} (Límite de ${cat.max} alcanzado en total)`;
+              option.disabled = true;
+              option.className = "text-danger";
+            } else {
+              option.textContent = `${cat.name} (${remaining} votos restantes en total)`;
             }
-            
-            subcats.forEach(cat => {
-                if (cat.roles.includes(rol)) {
-                    const option = document.createElement("option");
-                    option.value = cat.name;
-                    
-                    const used = groupName === "Mérito Docente" ? aggregateUsed : (votesByCategory[cat.name] || 0);
-                    const remaining = cat.max - used;
-                    
-                    if (remaining <= 0) {
-                        option.textContent = `${cat.name} (Límite de ${cat.max} alcanzado en total)`;
-                        option.disabled = true;
-                        option.className = "text-danger";
-                    } else {
-                        option.textContent = `${cat.name} (${remaining} votos restantes en total)`;
-                    }
-                    option.dataset.max = cat.max;
-                    option.dataset.used = used;
-                    option.dataset.filter = cat.filter;
-                    selectCategoria.appendChild(option);
-                }
-            });
-        }
-        if (selectRol) {
+            option.dataset.max = cat.max;
+            option.dataset.used = used;
+            option.dataset.filter = cat.filter;
+            selectCategoria.appendChild(option);
+          }
+        });
+      }
 
-            btnSaveRol.addEventListener('click', function() {
-                if(!selectRol.value) {
-                    alert("Por favor selecciona un perfil");
-                    return;
-                }
-                
-                // Show form conditionally
-                setupProfileArea.style.display = "none";
-                mainVotingArea.style.display = "block";
-                
-                const chosenRol = selectRol.value;
-                hiddenRol.value = chosenRol;
-                
-                populateMainCategories(chosenRol);
-            });
-        }
+      if (selectRol) {
+        btnSaveRol.addEventListener("click", function() {
+          if (!selectRol.value) {
+            alert("Por favor selecciona un perfil");
+            return;
+          }
+          // Show form conditionally
+          setupProfileArea.style.display = "none";
+          mainVotingArea.style.display = "block";
+          const chosenRol = selectRol.value;
+          hiddenRol.value = chosenRol;
+          populateMainCategories(chosenRol);
+        });
+      }
+      // If rol is already set
 
-        // If rol is already set
-        if (userRol) {
-            populateMainCategories(userRol);
-        }
+      if (userRol) {
+        populateMainCategories(userRol);
+      }
+      // Main category change event
 
-        // Main category change event
-        if (selectMainCat) {
-            selectMainCat.addEventListener('change', function() {
-                const groupName = this.options[this.selectedIndex].value;
-                const activeRol = userRol || document.getElementById("hidden-rol").value;
-                
-                // Reset child dropdowns
-                selectProfesor.innerHTML = '<option value="" disabled selected>Primero elige una variante</option>';
-                selectProfesor.disabled = true;
-                catHelp.innerHTML = '';
-                
-                populateSubCategories(groupName, activeRol);
-            });
-        }
+      if (selectMainCat) {
+        selectMainCat.addEventListener("change", function() {
+          const groupName = this.options[this.selectedIndex].value;
+          const activeRol = userRol || document.getElementById("hidden-rol").value;
+          // Reset child dropdowns
+          selectProfesor.innerHTML = '<option value="" disabled selected>Primero elige una variante</option>';
+          selectProfesor.disabled = true;
+          catHelp.innerHTML = "";
+          populateSubCategories(groupName, activeRol);
+        });
+      }
+      // Behavior when category is selected
 
-        // Behavior when category is selected
-        if (selectCategoria) {
-            selectCategoria.addEventListener('change', function() {
-                const opt = this.options[this.selectedIndex];
-                const catName = opt.value;
-                const filterTag = opt.dataset.filter;
-                
-                catHelp.innerHTML = `Límites aplicados. Has usado <strong>${opt.dataset.used}</strong> de <strong>${opt.dataset.max}</strong> votos permitidos.`;
+      if (selectCategoria) {
+        selectCategoria.addEventListener("change", function() {
+          const opt = this.options[this.selectedIndex];
+          const catName = opt.value;
+          const filterTag = opt.dataset.filter;
+          catHelp.innerHTML = `Límites aplicados. Has usado <strong>${opt.dataset.used}</strong> de <strong>${opt.dataset.max}</strong> votos permitidos.`;
+          // Populate Profesores based on category
+          selectProfesor.innerHTML = '<option value="" disabled selected>Elige a un candidato</option>';
+          selectProfesor.disabled = false;
+          allProfesores.filter(p => p.categoria === catName).sort((a, b) => (a.nombreCompleto ?? a.nombre_completo ?? "").localeCompare(b.nombreCompleto ?? b.nombre_completo ?? "")).forEach(p => {
+            const option = document.createElement("option");
+            option.value = p.id;
+            option.textContent = p.nombreCompleto ?? p.nombre_completo;
+            selectProfesor.appendChild(option);
+          });
+        });
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
 
-                // Populate Profesores based on category
-                selectProfesor.innerHTML = '<option value="" disabled selected>Elige a un candidato</option>';
-                selectProfesor.disabled = false;
-                
-                allProfesores.filter(p => p.categoria === catName).sort((a,b) => (a.nombreCompleto ?? a.nombre_completo ?? '').localeCompare(b.nombreCompleto ?? b.nombre_completo ?? '')).forEach(p => {
-                    const option = document.createElement("option");
-                    option.value = p.id;
-                    option.textContent = p.nombreCompleto ?? p.nombre_completo;
-                    selectProfesor.appendChild(option);
-                });
-            });
-        }
-    </script>    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    </script>
+  </body>
 </html>

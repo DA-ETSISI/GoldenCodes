@@ -1,126 +1,135 @@
 :root {
-    --color-negro: #000000;
-    --color-oro: #FFD700;
-    --color-naranja: #FFA500;
-    --color-gris-oscuro: #111111;
-    --color-gris-fondo: #1a1a1a;
-    --color-texto-claro: #f8e473;
+  --color-negro: #000000;
+  --color-oro: #ffd700;
+  --color-naranja: #ffa500;
+  --color-gris-oscuro: #111111;
+  --color-gris-fondo: #1a1a1a;
+  --color-texto-claro: #f8e473;
 }
 
 body {
-    background-color: var(--color-negro);
-    color: var(--color-oro);
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding-top: 72px;
-    overflow-x: hidden;
+  background-color: var(--color-negro);
+  color: var(--color-oro);
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding-top: 72px;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
-    font-family: 'Playfair Display', serif;
-    color: var(--color-oro);
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Playfair Display', serif;
+  color: var(--color-oro);
 }
 
 .navbar {
-    background-color: var(--color-negro);
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    transition: background-color 0.3s ease;
+  background-color: var(--color-negro);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease;
 }
 
-.navbar-brand, .nav-link {
-    color: var(--color-oro) !important;
-    font-weight: 500;
+.navbar-brand,
+.nav-link {
+  color: var(--color-oro) !important;
+  font-weight: 500;
 }
 
 .nav-link:hover {
-    color: var(--color-naranja) !important;
-    transform: scale(1.05);
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  color: var(--color-naranja) !important;
+  transform: scale(1.05);
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
 .btn-voto {
-    background-color: var(--color-oro);
-    color: var(--color-negro) !important;
-    font-weight: bold;
-    border: 2px solid var(--color-oro);
-    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  background-color: var(--color-oro);
+  color: var(--color-negro) !important;
+  font-weight: bold;
+  border: 2px solid var(--color-oro);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s,
+    background-color 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .btn-voto:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 25px var(--color-oro);
-    background-color: var(--color-naranja);
-    border-color: var(--color-naranja);
-    text-decoration: none;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 25px var(--color-oro);
+  background-color: var(--color-naranja);
+  border-color: var(--color-naranja);
+  text-decoration: none;
 }
 
 section {
-    padding: 100px 0;
+  padding: 100px 0;
 }
 
 .intro {
-    text-align: center;
-    background: linear-gradient(to bottom, var(--color-gris-oscuro) 10%, var(--color-negro) 100%);
+  text-align: center;
+  background: linear-gradient(to bottom, var(--color-gris-oscuro) 10%, var(--color-negro) 100%);
 }
 
 .intro h1 {
-    letter-spacing: 5px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  letter-spacing: 5px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .intro p {
-    font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .quienes-somos {
-    background-color: var(--color-gris-oscuro);
-    color: #cccccc;
+  background-color: var(--color-gris-oscuro);
+  color: #cccccc;
 }
 
 .quienes-somos .blockquote-footer {
-    color: var(--color-oro);
+  color: var(--color-oro);
 }
 
 .premios {
-    background-color: var(--color-gris-fondo);
+  background-color: var(--color-gris-fondo);
 }
 
 .card {
-    background-color: var(--color-negro);
-    border: 1px solid var(--color-oro);
-    color: var(--color-oro);
-    transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
-    border-radius: 10px;
+  background-color: var(--color-negro);
+  border: 1px solid var(--color-oro);
+  color: var(--color-oro);
+  transition:
+    transform 0.4s ease-in-out,
+    box-shadow 0.4s ease-in-out;
+  border-radius: 10px;
 }
 
 .card:hover {
-    transform: translateY(-15px);
-    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.5);
-    background-color: var(--color-gris-oscuro);
+  transform: translateY(-15px);
+  box-shadow: 0 15px 30px rgba(255, 215, 0, 0.5);
+  background-color: var(--color-gris-oscuro);
 }
 
 .card-title {
-    color: var(--color-oro);
-    font-weight: 700;
+  color: var(--color-oro);
+  font-weight: 700;
 }
 
 .card-text {
-    color: var(--color-texto-claro);
-    font-weight: 300;
+  color: var(--color-texto-claro);
+  font-weight: 300;
 }
 
 .card i {
-    color: var(--color-oro);
+  color: var(--color-oro);
 }
 
 a {
-    text-decoration: none;
-    color: var(--color-oro);
+  text-decoration: none;
+  color: var(--color-oro);
 }
 
 a:hover {
-    color: var(--color-naranja);
+  color: var(--color-naranja);
 }

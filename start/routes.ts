@@ -12,30 +12,46 @@ import { middleware } from '#start/kernel'
 router.get('/', [() => import('#controllers/home_controller'), 'index'])
 
 // Authentication routes
-router.group(() => {
+router
+  .group(() => {
     router.get('/register', [() => import('#controllers/auth_controller'), 'showRegister'])
     router.post('/register', [() => import('#controllers/auth_controller'), 'register'])
     router.get('/login', [() => import('#controllers/auth_controller'), 'showLogin'])
     router.post('/login', [() => import('#controllers/auth_controller'), 'login'])
-    router.get('/auth/oidc/redirect', [() => import('#controllers/auth_controller'), 'oidcRedirect'])
-    router.get('/auth/oidc/callback', [() => import('#controllers/auth_controller'), 'oidcCallback'])
-}).use(middleware.guest())
+    router.get('/auth/oidc/redirect', [
+      () => import('#controllers/auth_controller'),
+      'oidcRedirect',
+    ])
+    router.get('/auth/oidc/callback', [
+      () => import('#controllers/auth_controller'),
+      'oidcCallback',
+    ])
+  })
+  .use(middleware.guest())
 
-router.post('/logout', [() => import('#controllers/auth_controller'), 'logout']).use(middleware.auth())
+router
+  .post('/logout', [() => import('#controllers/auth_controller'), 'logout'])
+  .use(middleware.auth())
 
 // Protected voting routes
-router.group(() => {
+router
+  .group(() => {
     router.get('/votacion', [() => import('#controllers/formulario_controller'), 'show'])
     router.post('/votacion', [() => import('#controllers/formulario_controller'), 'store'])
     router.get('/mi-voto', [() => import('#controllers/users_controller'), 'myVote'])
-}).use(middleware.auth())
+  })
+  .use(middleware.auth())
 
 // Admin specific login routes (unprotected by middleware.admin())
 router.get('/admin/login', [() => import('#controllers/admin_controller'), 'showLogin'])
 router.post('/admin/login', [() => import('#controllers/admin_controller'), 'login'])
-router.post('/admin/logout', [() => import('#controllers/admin_controller'), 'logout']).use(middleware.admin())
+router
+  .post('/admin/logout', [() => import('#controllers/admin_controller'), 'logout'])
+  .use(middleware.admin())
 
 // Admin protected routes
-router.group(() => {
+router
+  .group(() => {
     router.get('/admin', [() => import('#controllers/admin_controller'), 'index'])
-}).use(middleware.admin())
+  })
+  .use(middleware.admin())

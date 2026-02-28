@@ -8,12 +8,12 @@ const redirectUri = env.get('OIDC_REDIRECT_URI')
 const enabled = !!(issuer && clientId && clientSecret && redirectUri)
 
 const oidcConfig = {
-    enabled,
-    issuer: issuer,
-    clientId: clientId,
-    clientSecret: clientSecret,
-    redirectUri: redirectUri,
-    scopes: 'openid profile email', // Default scopes to request
+  enabled,
+  issuer: issuer,
+  clientId: clientId,
+  clientSecret: clientSecret,
+  redirectUri: redirectUri,
+  scopes: 'openid profile email', // Default scopes to request
 }
 
 export default oidcConfig

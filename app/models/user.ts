@@ -1,4 +1,3 @@
-
 import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany, beforeSave } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
@@ -10,7 +9,6 @@ export default class User extends BaseModel {
 
   @column({ isPrimary: true })
   declare id: number
-
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

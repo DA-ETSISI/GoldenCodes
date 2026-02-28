@@ -6,7 +6,7 @@ services:
     container_name: goldencodes_app
     restart: unless-stopped
     ports:
-      - "3333:3333"
+      - '3333:3333'
     environment:
       NODE_ENV: development
       HOST: 0.0.0.0
@@ -36,9 +36,9 @@ services:
       MARIADB_USER: goldencodes
       MARIADB_PASSWORD: goldencodes
     ports:
-      - "3306:3306"
+      - '3306:3306'
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
       interval: 10s
       timeout: 5s
       retries: 5

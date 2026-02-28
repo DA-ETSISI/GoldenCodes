@@ -20,7 +20,7 @@ export default class FormularioController {
 
     // Group votes by category to count how many votes they have used
     const votesByCategory: Record<string, number> = {}
-    userVotes.forEach(v => {
+    userVotes.forEach((v) => {
       votesByCategory[v.categoria] = (votesByCategory[v.categoria] || 0) + 1
     })
 
@@ -28,7 +28,7 @@ export default class FormularioController {
       profesores,
       user,
       userVotes,
-      votesByCategory
+      votesByCategory,
     })
   }
 
@@ -46,7 +46,7 @@ export default class FormularioController {
       await user.save()
     }
 
-    const { profesor: profesorId, categoria } = payload as { profesor: string, categoria: string }
+    const { profesor: profesorId, categoria } = payload as { profesor: string; categoria: string }
 
     if (!profesorId || !categoria) {
       session.flash('error', 'Faltan datos obligatorios.')
@@ -60,7 +60,7 @@ export default class FormularioController {
     }
 
     // Validate categories and rules based on rol
-    const limits: Record<string, { roles: string[], max: number }> = {
+    const limits: Record<string, { roles: string[]; max: number }> = {
       // Mérito Docente
       'Primer curso (Grados)': { roles: ['Estudiante'], max: 3 },
       'Segundo curso (Grados)': { roles: ['Estudiante'], max: 3 },
@@ -96,7 +96,7 @@ export default class FormularioController {
       'Tercer y cuarto curso (TSI)',
       'Tercer y cuarto curso (Sistemas de Información)',
       'Grado en CDIA',
-      'Másteres universitarios'
+      'Másteres universitarios',
     ]
 
     // Count existing votes for this category (or group if Mérito Docente)
@@ -113,15 +113,23 @@ export default class FormularioController {
 
     if (currentCategoryVotes.length >= rule.max) {
       if (meritoDocenteCats.includes(categoria)) {
-        session.flash('error', `Ya has alcanzado el límite global de votos (${rule.max}) para Mérito Docente.`)
+        session.flash(
+          'error',
+          `Ya has alcanzado el límite global de votos (${rule.max}) para Mérito Docente.`
+        )
       } else {
-        session.flash('error', `Ya has alcanzado el límite de votos (${rule.max}) para esta categoría.`)
+        session.flash(
+          'error',
+          `Ya has alcanzado el límite de votos (${rule.max}) para esta categoría.`
+        )
       }
       return response.redirect().back()
     }
 
     // Prevent duplicate votes for the same person in the SAME category (or across Mérito Docente globally to avoid duplicates)
-    const alreadyVotedForPerson = currentCategoryVotes.find((v: Vote) => v.participanteId === profesor.id)
+    const alreadyVotedForPerson = currentCategoryVotes.find(
+      (v: Vote) => v.participanteId === profesor.id
+    )
     if (alreadyVotedForPerson) {
       session.flash('error', 'Ya has votado por esta persona en esta categoría o grupo.')
       return response.redirect().back()
@@ -131,7 +139,7 @@ export default class FormularioController {
     await Vote.create({
       userId: user.id,
       participanteId: profesor.id,
-      categoria: categoria
+      categoria: categoria,
     })
 
     // Increment votes in participante table

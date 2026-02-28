@@ -1,157 +1,230 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoldenCodes - Gala de Premios</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/css/app.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      GoldenCodes - Gala de Premios
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
 
     <!-- Barra de Navegación -->
     <nav class="navbar navbar-expand-lg fixed-top py-3">
-    <div class="container">
+      <div class="container">
         <a class="navbar-brand fs-4" href="#">
-            <i class="fa-solid fa-trophy me-2"></i> GoldenCodes
+          <i class="fa-solid fa-trophy me-2"></i>GoldenCodes
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#introduccion">Introducción</a></li>
-                <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes Somos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#premios">Premios</a></li>
-                <!-- Nuevo enlace de descarga de Bases -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/files/Bases Códigos de Oro Curso 2025-2026.pdf" download="Bases Códigos de Oro Curso 2025-2026.pdf" title="Descargar las bases oficiales del evento GoldenCodes">
-                        <i class="fa-solid fa-file-pdf me-1"></i> Descargar Bases
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="nav-link" href="#introduccion">Introducción</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#quienes-somos">Quiénes Somos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#premios">Premios</a>
+            </li>
+            <!-- Nuevo enlace de descarga de Bases -->
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="/files/Bases Códigos de Oro Curso 2025-2026.pdf"
+                download="Bases Códigos de Oro Curso 2025-2026.pdf"
+                title="Descargar las bases oficiales del evento GoldenCodes"
+              >
+                <i class="fa-solid fa-file-pdf me-1"></i>Descargar Bases
                     </a>
-                </li>
-                <!-- Botón de Votación / Mi Voto -->
-                <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-                    @if(hasVoted)
-                        <a class="btn btn-outline-warning px-4 py-2" href="/mi-voto">
-                            <i class="fa-solid fa-check-to-slot me-2"></i> Ver mi voto
+            </li>
+            <!-- Botón de Votación / Mi Voto -->
+            <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+              @if(hasVoted)
+                <a class="btn btn-outline-warning px-4 py-2" href="/mi-voto">
+                  <i class="fa-solid fa-check-to-slot me-2"></i>Ver mi voto
                         </a>
-                    @else
-                        <a class="btn btn-voto px-4 py-2" href="votacion">
-                            <i class="fa-solid fa-star me-2"></i> Haz tu voto
+              @else
+                <a class="btn btn-voto px-4 py-2" href="votacion">
+                  <i class="fa-solid fa-star me-2"></i>Haz tu voto
                         </a>
-                    @endif
-                </li>
-                <!-- User Menu -->
-                @if(auth.user)
-                    <li class="nav-item dropdown ms-lg-3">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fa-solid fa-user me-1"></i> {{ auth.user.nombre }}
+              @endif
+            </li>
+            <!-- User Menu -->
+            @if(auth.user)
+              <li class="nav-item dropdown ms-lg-3">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-user me-1"></i>{{ auth.user.nombre }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><h6 class="dropdown-header">{{ auth.user.email }}</h6></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="/mi-voto">
-                                    <i class="fa-solid fa-check-to-slot me-2"></i> Ver mi voto
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <h6 class="dropdown-header">
+                      {{ auth.user.email }}
+                    </h6>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/mi-voto">
+                      <i class="fa-solid fa-check-to-slot me-2"></i>Ver mi voto
                                 </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="/logout" method="POST">
-                                    {{ csrfField() }}
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <form action="/logout" method="POST">
+                      {{ csrfField() }}
                                     <button type="submit" class="dropdown-item">
-                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>Cerrar Sesión
                                     </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                @endif
-            </ul>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+            @endif
+          </ul>
         </div>
-    </div>
-</nav>
-
+      </div>
+    </nav>
 
     <section id="introduccion" class="intro d-flex align-items-center min-vh-100">
-        <div class="container">
-            <div class="p-5">
-                <i class="fa-solid fa-trophy fa-bounce fa-5x mb-4" style="color: #FFD700;"></i>
-                <h1 class="display-1 fw-bold mb-4">La Gala GoldenCodes</h1>
-                <p class="lead" style="font-size: 1.5rem; font-weight: 300;">
-                    Una noche de **elegancia, distinción y reconocimiento** a lo más brillante del talento informático.
-                </p>
-                <a href="#premios" class="btn btn-voto mt-4 px-5 py-3 text-uppercase">
-                    Descubre las Categorías
+      <div class="container">
+        <div class="p-5">
+          <i class="fa-solid fa-trophy fa-bounce fa-5x mb-4" style="color: #FFD700;"></i>
+          <h1 class="display-1 fw-bold mb-4">
+            La Gala GoldenCodes
+          </h1>
+          <p class="lead" style="font-size: 1.5rem; font-weight: 300;">
+            Una noche de **elegancia, distinción y reconocimiento** a lo más brillante del talento informático.
+          </p>
+          <a href="#premios" class="btn btn-voto mt-4 px-5 py-3 text-uppercase">
+            Descubre las Categorías
                 </a>
-            </div>
         </div>
+      </div>
     </section>
 
     <section id="quienes-somos" class="quienes-somos">
-        <div class="container">
-            <h2 class="text-center display-4 mb-5">Nuestra Misión</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <blockquote class="blockquote text-center p-4 border-start border-warning border-5 mx-auto">
-                        <p class="mb-0 fs-5" style="font-weight: 300;">
-                            La Delegación de Alumnos de la ETSI de Sistemas Informáticos (DA-ETSISI) es la entidad encargada de coordinar y canalizar la representación de los estudiantes en el centro. Está constituida por todos los representantes de alumnos de la ETSISI y por compañeros que, de forma voluntaria, ayudan a la realización de las tareas de delegación. Formamos parte de la Delegación de Alumnos de la Universidad Politécnica de Madrid (DA-UPM).
-                        </p>
-                        <footer class="blockquote-footer mt-3">DA-ETSISI <cite title="Source Title">Organizando la excelencia</cite></footer>
-                    </blockquote>
-                </div>
-            </div>
+      <div class="container">
+        <h2 class="text-center display-4 mb-5">
+          Nuestra Misión
+        </h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <blockquote class="blockquote text-center p-4 border-start border-warning border-5 mx-auto">
+              <p class="mb-0 fs-5" style="font-weight: 300;">
+                La Delegación de Alumnos de la ETSI de Sistemas Informáticos (DA-ETSISI) es la entidad encargada de coordinar y canalizar la representación de los estudiantes en el centro. Está constituida por todos los representantes de alumnos de la ETSISI y por compañeros que, de forma voluntaria, ayudan a la realización de las tareas de delegación. Formamos parte de la Delegación de Alumnos de la Universidad Politécnica de Madrid (DA-UPM).
+              </p>
+              <footer class="blockquote-footer mt-3">
+                DA-ETSISI <cite title="Source Title">Organizando la excelencia</cite>
+              </footer>
+            </blockquote>
+          </div>
         </div>
+      </div>
     </section>
 
-   <section id="premios" class="premios bg-dark py-5">
-    <div class="container">
-        <h2 class="text-center display-4 mb-5 text-warning">🏆 Categorías de Premios 🏆</h2>
+    <section id="premios" class="premios bg-dark py-5">
+      <div class="container">
+        <h2 class="text-center display-4 mb-5 text-warning">
+          🏆 Categorías de Premios 🏆
+        </h2>
         <div class="row g-5 justify-content-center">
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5" style="background-color:#111;">
-                    <i class="fa-solid fa-graduation-cap fa-3x mb-3 text-warning"></i>
-                    <h4 class="card-title mt-2 text-light">Mérito Docente</h4>
-                    <p class="card-text small text-light">Reconociendo la excelencia en la enseñanza elegida por los estudiantes en 8 subcategorías.</p>
-                </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div
+              class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5"
+              style="background-color:#111;"
+            >
+              <i class="fa-solid fa-graduation-cap fa-3x mb-3 text-warning"></i>
+              <h4 class="card-title mt-2 text-light">
+                Mérito Docente
+              </h4>
+              <p class="card-text small text-light">
+                Reconociendo la excelencia en la enseñanza elegida por los estudiantes en 8 subcategorías.
+              </p>
             </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5" style="background-color:#111;">
-                    <i class="fa-solid fa-lightbulb fa-3x mb-3 text-warning"></i>
-                    <h4 class="card-title mt-2 text-light">Innovación Educativa</h4>
-                    <p class="card-text small text-light">Para el PDI que ha destacado introduciendo metodologías innovadoras en la docencia.</p>
-                </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div
+              class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5"
+              style="background-color:#111;"
+            >
+              <i class="fa-solid fa-lightbulb fa-3x mb-3 text-warning"></i>
+              <h4 class="card-title mt-2 text-light">
+                Innovación Educativa
+              </h4>
+              <p class="card-text small text-light">
+                Para el PDI que ha destacado introduciendo metodologías innovadoras en la docencia.
+              </p>
             </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5" style="background-color:#111;">
-                    <i class="fa-solid fa-users-gear fa-3x mb-3 text-warning"></i>
-                    <h4 class="card-title mt-2 text-light">Reconocimiento PTGAS</h4>
-                    <p class="card-text small text-light">Agradeciendo la labor del personal técnico y al PDI más valorado por este colectivo.</p>
-                </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div
+              class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5"
+              style="background-color:#111;"
+            >
+              <i class="fa-solid fa-users-gear fa-3x mb-3 text-warning"></i>
+              <h4 class="card-title mt-2 text-light">
+                Reconocimiento PTGAS
+              </h4>
+              <p class="card-text small text-light">
+                Agradeciendo la labor del personal técnico y al PDI más valorado por este colectivo.
+              </p>
             </div>
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5" style="background-color:#111;">
-                    <i class="fa-solid fa-award fa-3x mb-3 text-warning"></i>
-                    <h4 class="card-title mt-2 text-light">Premio Honorífico</h4>
-                    <p class="card-text small text-light">Homenaje especial al PDI jubilado más destacado por su trayectoria profesional.</p>
-                </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div
+              class="card p-4 h-100 text-center category-card shadow-sm border-0 border-top border-warning border-5"
+              style="background-color:#111;"
+            >
+              <i class="fa-solid fa-award fa-3x mb-3 text-warning"></i>
+              <h4 class="card-title mt-2 text-light">
+                Premio Honorífico
+              </h4>
+              <p class="card-text small text-light">
+                Homenaje especial al PDI jubilado más destacado por su trayectoria profesional.
+              </p>
             </div>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
     <footer class="bg-dark text-center py-4 border-top border-warning opacity-75">
-        <div class="container">
-            <p class="m-0 small">&copy; <span id="current-year"></span> GoldenCodes - Gala de Premios | Organizado por DA-ETSISI</p>
-        </div>
+      <div class="container">
+        <p class="m-0 small">
+          &copy; <span id="current-year"></span>GoldenCodes - Gala de Premios | Organizado por DA-ETSISI
+        </p>
+      </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
-</body>
+    <script>
+      document.getElementById("current-year").textContent = new Date().getFullYear();
+    </script>
+  </body>
 </html>

@@ -41,7 +41,7 @@ export default defineConfig({
     () => import('@adonisjs/core/providers/hash_provider'),
     {
       file: () => import('@adonisjs/core/providers/repl_provider'),
-      environment: ['repl', 'test'],
+      environment: ['repl'],
     },
     () => import('@adonisjs/core/providers/vinejs_provider'),
     () => import('@adonisjs/core/providers/edge_provider'),
@@ -50,7 +50,7 @@ export default defineConfig({
     () => import('@adonisjs/shield/shield_provider'),
     () => import('@adonisjs/static/static_provider'),
     () => import('@adonisjs/lucid/database_provider'),
-    () => import('@adonisjs/auth/auth_provider')
+    () => import('@adonisjs/auth/auth_provider'),
   ],
 
   /*
@@ -63,30 +63,7 @@ export default defineConfig({
   */
   preloads: [() => import('#start/routes'), () => import('#start/kernel')],
 
-  /*
-  |--------------------------------------------------------------------------
-  | Tests
-  |--------------------------------------------------------------------------
-  |
-  | List of test suites to organize tests by their type. Feel free to remove
-  | and add additional suites.
-  |
-  */
-  tests: {
-    suites: [
-      {
-        files: ['tests/unit/**/*.spec(.ts|.js)'],
-        name: 'unit',
-        timeout: 2000,
-      },
-      {
-        files: ['tests/functional/**/*.spec(.ts|.js)'],
-        name: 'functional',
-        timeout: 30000,
-      },
-    ],
-    forceExit: false,
-  },
+
 
   metaFiles: [
     {

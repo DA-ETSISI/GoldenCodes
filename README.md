@@ -11,6 +11,7 @@ GoldenCodes permite a estudiantes, profesores y PTGAS consultar las nominaciones
 El sistema está diseñado para ser rápido, claro y fácil de usar.
 
 **Funciones clave**
+
 - Visualización de categorías y nominaciones.
 - Autenticación integrada.
 - Voto único por usuario.
@@ -34,6 +35,7 @@ El backend utiliza **AdonisJS v6**, un framework para Node.js estructurado y tip
 ## ⚙️ Instalación
 
 Debe existir una conexión a una base de datos sql
+
 ```bash
 git clone https://github.com/ChavaDav/goldencodes.git
 cd goldencodes
@@ -43,5 +45,3 @@ node ace migration:run
 node ace db:seed
 npm run dev
 ```
-
-

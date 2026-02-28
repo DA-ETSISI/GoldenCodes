@@ -1,128 +1,162 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - GoldenCodes</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Panel de Administración - GoldenCodes
+    </title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="/css/app.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
 
     <style>
-        body { padding-top: 36px; background-color: #f8f9fa; }
-        .admin-header { background: #1a1a1a; color: #ffd700; border-bottom: 3px solid #ffd700; }
+      body {
+        padding-top: 36px;
+        background-color: #f8f9fa;
+      }
+      
+      .admin-header {
+        background: #1a1a1a;
+        color: #ffd700;
+        border-bottom: 3px solid #ffd700;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- NAVEGACIÓN ADMIN -->
     <nav class="navbar navbar-expand-lg fixed-top py-3 admin-header shadow">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fs-4 text-warning" href="#">
-                <i class="fa-solid fa-user-shield me-2"></i> GoldenCodes <span>Admin</span>
-            </a>
-            <div class="ms-auto d-flex align-items-center gap-3">
-                <a href="/" class="btn btn-outline-warning btn-sm">
-                    <i class="fa-solid fa-arrow-left me-2"></i> Volver a la Web
+      <div class="container-fluid px-4">
+        <a class="navbar-brand fs-4 text-warning" href="#">
+          <i class="fa-solid fa-user-shield me-2"></i>GoldenCodes <span>Admin</span>
+        </a>
+        <div class="ms-auto d-flex align-items-center gap-3">
+          <a href="/" class="btn btn-outline-warning btn-sm">
+            <i class="fa-solid fa-arrow-left me-2"></i>Volver a la Web
                 </a>
-                <form action="/admin/logout" method="POST" class="m-0">
-                    {{ csrfField() }}
+          <form action="/admin/logout" method="POST" class="m-0">
+            {{ csrfField() }}
                     <button type="submit" class="btn btn-danger btn-sm fw-bold">
-                        <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión Segura
+              <i class="fa-solid fa-right-from-bracket me-2"></i>Cerrar Sesión Segura
                     </button>
-                </form>
-            </div>
+          </form>
         </div>
+      </div>
     </nav>
 
     <section class="py-5 mt-5">
-        <div class="container-fluid px-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="display-5 fw-bold text-dark">
-                    <i class="fa-solid fa-chart-bar text-warning me-2"></i> Resultados en Tiempo Real
-                </h2>
-                <button class="btn btn-dark" onclick="window.location.reload();">
-                    <i class="fa-solid fa-rotate-right me-2"></i> Actualizar Datos
+      <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="display-5 fw-bold text-dark">
+            <i class="fa-solid fa-chart-bar text-warning me-2"></i>Resultados en Tiempo Real
+          </h2>
+          <button class="btn btn-dark" onclick="window.location.reload();">
+            <i class="fa-solid fa-rotate-right me-2"></i>Actualizar Datos
                 </button>
-            </div>
-
-            <div class="row">
-                @each((participantes, categoria) in groupedResults)
-                    <div class="col-lg-6 mb-4">
-                        <div class="card shadow-sm h-100 border-0 border-top border-warning border-4">
-                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fw-bold text-dark">{{ categoria }}</h5>
-                                @if(participantes.length > 5)
-                                    <button class="btn btn-outline-dark btn-sm toggle-btn" data-categoria="{{ categoria.replace(/\s+/g, '-') }}">
-                                        <i class="fa-solid fa-plus me-1"></i> Ver más
-                                    </button>
-                                @endif
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-striped mb-0 align-middle">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th scope="col" class="ps-4" style="width: 10%;">Pos</th>
-                                                <th scope="col">Participante</th>
-                                                <th scope="col" class="text-center" style="width: 20%;">Votos Recibidos</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @each((p, index) in participantes)
-                                                <tr class="{{ index === 0 && p.numero_votos > 0 ? 'table-warning fw-bold' : '' }} {{ index >= 5 ? 'd-none extra-row-' + categoria.replace(/\s+/g, '-') : '' }}">
-                                                    <td class="ps-4">
-                                                        @if(index === 0 && p.numero_votos > 0)
-                                                            <i class="fa-solid fa-trophy text-warning"></i>
-                                                        @else
-                                                            #{{ index + 1 }}
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ p.nombreCompleto }}</td>
-                                                    <td class="text-center">
-                                                        <span class="badge {{ p.numero_votos > 0 ? 'bg-dark' : 'bg-secondary' }} fs-6 rounded-pill px-3">
-                                                            {{ p.numero_votos }}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            @endeach
-                                            
-                                            @if(participantes.length === 0)
-                                                <tr>
-                                                    <td colspan="3" class="text-center text-muted py-4">No hay candidatos registrados en esta categoría.</td>
-                                                </tr>
-                                            @endif
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endeach
-            </div>
         </div>
+
+        <div class="row">
+          @each((participantes, categoria) in groupedResults)
+            <div class="col-lg-6 mb-4">
+              <div class="card shadow-sm h-100 border-0 border-top border-warning border-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0 fw-bold text-dark">
+                    {{ categoria }}
+                  </h5>
+                  @if(participantes.length > 5)
+                    <button
+                      class="btn btn-outline-dark btn-sm toggle-btn"
+                      data-categoria="{{ categoria.replace(/\s+/g, '-') }}"
+                    >
+                      <i class="fa-solid fa-plus me-1"></i>Ver más
+                                    </button>
+                  @endif
+                </div>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0 align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th scope="col" class="ps-4" style="width: 10%;">
+                            Pos
+                          </th>
+                          <th scope="col">
+                            Participante
+                          </th>
+                          <th scope="col" class="text-center" style="width: 20%;">
+                            Votos Recibidos
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @each((p, index) in participantes)
+                          <tr
+                            class="{{ index === 0 && p.numero_votos > 0 ? 'table-warning fw-bold' : '' }} {{ index >= 5 ? 'd-none extra-row-' + categoria.replace(/\s+/g, '-') : '' }}"
+                          >
+                            <td class="ps-4">
+                              @if(index === 0 && p.numero_votos > 0)
+                                <i class="fa-solid fa-trophy text-warning"></i>
+                              @else
+                                #{{ index + 1 }}
+                              @endif
+                            </td>
+                            <td>
+                              {{ p.nombreCompleto }}
+                            </td>
+                            <td class="text-center">
+                              <span class="badge {{ p.numero_votos > 0 ? 'bg-dark' : 'bg-secondary' }} fs-6 rounded-pill px-3">
+                                {{ p.numero_votos }}
+                                                        </span>
+                            </td>
+                          </tr>
+                        @endeach
+                                            
+                        @if(participantes.length === 0)
+                          <tr>
+                            <td colspan="3" class="text-center text-muted py-4">
+                              No hay candidatos registrados en esta categoría.
+                            </td>
+                          </tr>
+                        @endif
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          @endeach
+        </div>
+      </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const categoriaId = this.getAttribute('data-categoria');
-                const extraRows = document.querySelectorAll('.extra-row-' + categoriaId);
-                const isHidden = extraRows[0].classList.contains('d-none');
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
 
-                if (isHidden) {
-                    extraRows.forEach(row => row.classList.remove('d-none'));
-                    this.innerHTML = '<i class="fa-solid fa-minus me-1"></i> Ver menos';
-                } else {
-                    extraRows.forEach(row => row.classList.add('d-none'));
-                    this.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Ver más';
-                }
-            });
-        });
     </script>
-</body>
+    <script>
+      document.querySelectorAll(".toggle-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+          const categoriaId = this.getAttribute("data-categoria");
+          const extraRows = document.querySelectorAll(".extra-row-" + categoriaId);
+          const isHidden = extraRows[0].classList.contains("d-none");
+          if (isHidden) {
+            extraRows.forEach(row => row.classList.remove("d-none"));
+            this.innerHTML = '<i class="fa-solid fa-minus me-1"></i> Ver menos';
+          } else {
+            extraRows.forEach(row => row.classList.add("d-none"));
+            this.innerHTML = '<i class="fa-solid fa-plus me-1"></i> Ver más';
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
