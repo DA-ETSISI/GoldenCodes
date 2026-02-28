@@ -1,3 +1,4 @@
+import env from '#start/env'
 import type { HttpContext } from '@adonisjs/core/http'
 import Participante from '#models/participante'
 
@@ -28,8 +29,11 @@ export default class AdminController {
     async login({ request, response, session }: HttpContext) {
         const { username, password } = request.all()
 
-        // Validation of hardcoded credentials
-        if (username === 'admin' && password === 'admin') {
+        // Validation of credentials using environment variables
+        const adminUser = env.get('ADMIN_USER')
+        const adminPass = env.get('ADMIN_PASSWORD')
+
+        if (username === adminUser && password === adminPass) {
             session.put('isAdmin', true)
             return response.redirect('/admin')
         }

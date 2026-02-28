@@ -31,11 +31,17 @@
                         <i class="fa-solid fa-file-pdf me-1"></i> Descargar Bases
                     </a>
                 </li>
-                <!-- Botón de Votación -->
+                <!-- Botón de Votación / Mi Voto -->
                 <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
-                    <a class="btn btn-voto px-4 py-2" href="votacion">
-                        <i class="fa-solid fa-star me-2"></i> Haz tu voto
-                    </a>
+                    @if(hasVoted)
+                        <a class="btn btn-outline-warning px-4 py-2" href="/mi-voto">
+                            <i class="fa-solid fa-check-to-slot me-2"></i> Ver mi voto
+                        </a>
+                    @else
+                        <a class="btn btn-voto px-4 py-2" href="votacion">
+                            <i class="fa-solid fa-star me-2"></i> Haz tu voto
+                        </a>
+                    @endif
                 </li>
                 <!-- User Menu -->
                 @if(auth.user)

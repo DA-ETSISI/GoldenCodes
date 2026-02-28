@@ -146,6 +146,7 @@
                                             <option value="" disabled selected>Selecciona una opción</option>
                                             <option value="PDI">Personal Docente e Investigador (PDI)</option>
                                             <option value="PTGAS">Personal Técnico, de Gestión y Administración (PTGAS)</option>
+                                            <option value="Estudiante">Estudiante</option>
                                         </select>
                                     </div>
                                     <button type="button" class="btn btn-dark w-100" id="btn-save-rol">
@@ -258,6 +259,9 @@
             "Reconocimiento PTGAS": [
                 { name: "PDI más valorado por PTGAS", roles: ["PTGAS"], max: 5, filter: "PDI" },
                 { name: "PTGAS en activo más valorado", roles: ["PDI", "PTGAS"], max: 5, filter: "PTGAS" }
+            ],
+            "Especiales / Otros": [
+                { name: "Premio Honorífico", roles: ["Estudiante", "PDI", "PTGAS"], max: 1, filter: "Honorífico" }
             ]
         };
 

@@ -9,10 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
-router.on('/').render('pages/home')
-router.on('/gracias').render('pages/gracias')
-
-router.get('/users', [() => import('#controllers/users_controller'), 'index'])
+router.get('/', [() => import('#controllers/home_controller'), 'index'])
 
 // Authentication routes
 router.group(() => {
@@ -41,15 +38,4 @@ router.post('/admin/logout', [() => import('#controllers/admin_controller'), 'lo
 // Admin protected routes
 router.group(() => {
     router.get('/admin', [() => import('#controllers/admin_controller'), 'index'])
-
-    router.get('/consultar-voto', [() => import('#controllers/users_controller'), 'check'])
-    router.post('/consultar-voto', [() => import('#controllers/users_controller'), 'find'])
-    router.get('/consultar-voto/:id', [() => import('#controllers/users_controller'), 'show'])
-
-    router.get('/consultar-participante', [() => import('#controllers/users_controller'), 'checkParticipant'])
-    router.post('/consultar-participante', [() => import('#controllers/users_controller'), 'findParticipant'])
-    router.get('/consultar-participante/:id', [() => import('#controllers/users_controller'), 'showParticipant'])
 }).use(middleware.admin())
-
-// Results route (Public but time-restricted)
-router.get('/resultados', [() => import('#controllers/results_controller'), 'index'])

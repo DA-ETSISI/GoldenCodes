@@ -34,7 +34,7 @@ export default class FormularioController {
 
   async store({ request, response, session, auth }: HttpContext) {
     const user = auth.getUserOrFail()
-    const payload = request.all()
+    const payload = request.only(['rol', 'profesor', 'categoria'])
 
     // On the first vote, the user must set their rol
     if (!user.rol) {
@@ -74,6 +74,7 @@ export default class FormularioController {
       'Innovación Educativa': { roles: ['Estudiante', 'PDI'], max: 1 },
       'PDI más valorado por PTGAS': { roles: ['PTGAS'], max: 5 },
       'PTGAS en activo más valorado': { roles: ['PDI', 'PTGAS'], max: 5 },
+      'Premio Honorífico': { roles: ['Estudiante', 'PDI', 'PTGAS'], max: 1 },
     }
 
     const rule = limits[categoria]

@@ -52,4 +52,6 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   RESULTS_AVAILABLE_AT: Env.schema.string(),
+  ADMIN_USER: Env.schema.string(),
+  ADMIN_PASSWORD: Env.schema.string(),
 })
