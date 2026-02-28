@@ -1,14 +1,20 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
+# --- Production Stage ---
+FROM base AS production
+ENV NODE_ENV=production
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+# Copy package files from the build directory
+COPY build/package*.json ./
 
-COPY . .
+# Install production dependencies
+RUN npm ci --omit=dev
 
-RUN npm run build
+# Copy the rest of the build output
+COPY build/ .
 
 EXPOSE 3333
 
-CMD ["node", "build/bin/server.js"]
+# Start the server
+CMD ["node", "bin/server.js"]

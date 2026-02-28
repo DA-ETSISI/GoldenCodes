@@ -8,7 +8,7 @@ services:
     ports:
       - '3333:3333'
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3333
       APP_KEY: Uyvd7o72tHN3mNUHy6nzGcBseTkH91tF
@@ -18,13 +18,10 @@ services:
       DB_USER: goldencodes
       DB_PASSWORD: goldencodes
       DB_DATABASE: app
-    volumes:
-      - .:/app
-      - /app/node_modules
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "node ace migration:run && node ace serve --watch"
+    command: sh -c "node ace.js migration:run --force && node bin/server.js"
 
   db:
     image: mariadb:11
@@ -38,7 +35,7 @@ services:
     ports:
       - '3306:3306'
     healthcheck:
-      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      test: [ 'CMD', 'healthcheck.sh', '--connect', '--innodb_initialized' ]
       interval: 10s
       timeout: 5s
       retries: 5
