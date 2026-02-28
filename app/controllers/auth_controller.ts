@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
+import crypto from 'node:crypto'
 
 export default class AuthController {
     async showRegister({ view }: HttpContext) {
@@ -163,7 +164,7 @@ export default class AuthController {
                 user = await User.create({
                     nombre: name as string,
                     email: email as string,
-                    password: Math.random().toString(36).slice(-8), // Random password
+                    password: crypto.randomUUID(), // Secure random password
                 })
             }
 
