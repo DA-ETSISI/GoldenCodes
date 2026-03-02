@@ -74,7 +74,6 @@ export default class FormularioController {
       'Innovación Educativa': { roles: ['Estudiante', 'PDI'], max: 1 },
       'PDI más valorado por PTGAS': { roles: ['PTGAS'], max: 5 },
       'PTGAS en activo más valorado': { roles: ['PDI', 'PTGAS'], max: 5 },
-      'Premio Honorífico': { roles: ['Estudiante', 'PDI', 'PTGAS'], max: 1 },
     }
 
     const rule = limits[categoria]
