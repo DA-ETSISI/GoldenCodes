@@ -10,6 +10,7 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
 router.get('/', [() => import('#controllers/home_controller'), 'index'])
+router.get('/innovacion-educativa', [() => import('#controllers/home_controller'), 'innovation'])
 
 // Authentication routes
 router

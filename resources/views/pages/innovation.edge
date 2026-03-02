@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Innovación Educativa - GoldenCodes
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
+    <style>
+      .innovation-header {
+        background: linear-gradient(to bottom, var(--color-gris-oscuro) 0%, var(--color-negro) 100%);
+        padding: 120px 0 60px;
+        text-align: center;
+      }
+      .participant-card {
+        height: 100%;
+        transition: transform 0.3s ease;
+      }
+      .participant-card:hover {
+        transform: translateY(-10px);
+      }
+      .participant-img {
+        height: 250px;
+        object-fit: cover;
+        border-bottom: 2px solid var(--color-oro);
+      }
+      .category-description {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg fixed-top py-3">
+      <div class="container">
+        <a class="navbar-brand fs-4" href="/">
+          <i class="fa-solid fa-trophy me-2"></i>GoldenCodes
+        </a>
+        <div class="ms-auto">
+            <a href="/" class="btn btn-outline-warning px-4">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver al Inicio
+            </a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="innovation-header">
+      <div class="container">
+        <i class="fa-solid fa-lightbulb fa-5x mb-4 text-warning"></i>
+        <h1 class="display-3 fw-bold mb-4">Innovación Educativa</h1>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <p class="category-description">
+              Esta categoría reconoce a aquellos docentes (PDI) que han transformado la experiencia de aprendizaje en la ETSISI.
+              Buscamos premiar la implementación de nuevas metodologías, el uso creativo de tecnologías educativas, 
+              la gamificación del aula y cualquier iniciativa que fomente la participación activa y el entusiasmo de los estudiantes por el conocimiento.
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-5 bg-dark">
+      <div class="container">
+        <h2 class="text-center mb-5 text-warning">Participantes Destacados</h2>
+        <div class="row g-4">
+          <!-- Participante 1 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card participant-card border-warning">
+              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
+              <div class="card-body text-center">
+                <h4 class="card-title">Nombre del Docente</h4>
+                <p class="card-text">
+                  Descripción detallada de la innovación realizada. Por ejemplo: "Implementación de un sistema de retos basado en blockchain para la asignatura de Seguridad Informática."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participante 2 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card participant-card border-warning">
+              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
+              <div class="card-body text-center">
+                <h4 class="card-title">Nombre del Docente 2</h4>
+                <p class="card-text">
+                  Descripción de su labor innovadora. "Uso de realidad virtual para la enseñanza de arquitectura de computadores."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participante 3 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card participant-card border-warning">
+              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
+              <div class="card-body text-center">
+                <h4 class="card-title">Nombre del Docente 3</h4>
+                <p class="card-text">
+                  Innovación docente destacada. "Metodología Flipped Classroom adaptada a entornos de desarrollo colaborativo."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-dark text-center py-4 border-top border-warning opacity-75">
+      <div class="container">
+        <p class="m-0 small">
+          &copy; <span id="current-year"></span> GoldenCodes - Gala de Premios | Organizado por DA-ETSISI
+        </p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById("current-year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>

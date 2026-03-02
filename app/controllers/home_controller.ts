@@ -8,7 +8,10 @@ export default class HomeController {
       await auth.user.loadCount('votes')
       hasVoted = Number(auth.user.$extras.votes_count) > 0
     }
-
     return view.render('pages/home', { hasVoted })
+  }
+
+  async innovation({ view }: HttpContext) {
+    return view.render('pages/innovation')
   }
 }
