@@ -39,6 +39,27 @@
         font-size: 1.1rem;
         color: #ccc;
       }
+      .card-text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .modal-content {
+        background-color: var(--color-gris-oscuro);
+        border: 1px solid var(--color-oro);
+        color: white;
+      }
+      .modal-header {
+        border-bottom: 1px solid var(--color-oro);
+      }
+      .modal-footer {
+        border-top: 1px solid var(--color-oro);
+      }
+      .img-top-focus {
+        object-position: top center;
+      }
     </style>
   </head>
   <body>
@@ -64,9 +85,7 @@
         <div class="row justify-content-center">
           <div class="col-lg-8">
             <p class="category-description">
-              Esta categoría reconoce a aquellos docentes (PDI) que han transformado la experiencia de aprendizaje en la ETSISI.
-              Buscamos premiar la implementación de nuevas metodologías, el uso creativo de tecnologías educativas, 
-              la gamificación del aula y cualquier iniciativa que fomente la participación activa y el entusiasmo de los estudiantes por el conocimiento.
+              La innovación educativa es uno de los motores principales para mejorar la calidad de la enseñanza en la Escuela. Reconocer a quienes experimentan con nuevas metodologías, incorporan herramientas tecnológicas, replantean la forma de evaluar o consiguen implicar más al estudiantado significa apostar por una docencia más efectiva, motivadora y adaptada a los retos actuales. Con este premio queremos visibilizar aquellas iniciativas que, desde el compromiso con la mejora continua, contribuyen a que la formación en la Universidad Politécnica de Madrid y en la ETSI Sistemas Informáticos sea cada vez más innovadora, participativa y transformadora.
             </p>
           </div>
         </div>
@@ -76,16 +95,20 @@
     <section class="py-5 bg-dark">
       <div class="container">
         <h2 class="text-center mb-5 text-warning">Participantes Destacados</h2>
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
+
           <!-- Participante 1 -->
           <div class="col-md-6 col-lg-4">
             <div class="card participant-card border-warning">
-              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
-              <div class="card-body text-center">
-                <h4 class="card-title">Nombre del Docente</h4>
-                <p class="card-text">
-                  Descripción detallada de la innovación realizada. Por ejemplo: "Implementación de un sistema de retos basado en blockchain para la asignatura de Seguridad Informática."
+              <img src="/images/Elvira-Amador.jpg" class="card-img-top participant-img" alt="Elvira Amador">
+              <div class="card-body text-center d-flex flex-column">
+                <h4 class="card-title">Elvira Amador</h4>
+                <p class="card-text card-text-truncate flex-grow-1">
+                  Profesora Ayudante Doctora en la ETSISI. Coopera en proyectos de innovación educativa como GAVI para gamificar la Verificación y Validación de Software. Premio a la Excelencia Docente Emergente UPM 2025.
                 </p>
+                <button class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#modalElvira">
+                  Ver más
+                </button>
               </div>
             </div>
           </div>
@@ -93,12 +116,15 @@
           <!-- Participante 2 -->
           <div class="col-md-6 col-lg-4">
             <div class="card participant-card border-warning">
-              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
-              <div class="card-body text-center">
-                <h4 class="card-title">Nombre del Docente 2</h4>
-                <p class="card-text">
-                  Descripción de su labor innovadora. "Uso de realidad virtual para la enseñanza de arquitectura de computadores."
+              <img src="/images/dani-fis-foto.jpeg" class="card-img-top participant-img img-top-focus" alt="Daniel López Fernández">
+              <div class="card-body text-center d-flex flex-column">
+                <h4 class="card-title">Daniel López Fernández</h4>
+                <p class="card-text card-text-truncate flex-grow-1">
+                  Filosofía de aprendizaje práctico y memorable mediante videojuegos educativos, realidad virtual, escape rooms y LEGO. Premio de Innovación Educativa UPM 2022.
                 </p>
+                <button class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#modalDaniel">
+                  Ver más
+                </button>
               </div>
             </div>
           </div>
@@ -106,15 +132,201 @@
           <!-- Participante 3 -->
           <div class="col-md-6 col-lg-4">
             <div class="card participant-card border-warning">
-              <img src="/images/placeholder_user.png" class="card-img-top participant-img" alt="Nombre del Participante">
-              <div class="card-body text-center">
-                <h4 class="card-title">Nombre del Docente 3</h4>
-                <p class="card-text">
-                  Innovación docente destacada. "Metodología Flipped Classroom adaptada a entornos de desarrollo colaborativo."
+              <img src="/images/fernando-public.jpg" class="card-img-top participant-img" alt="Fernando Ortega Requena">
+              <div class="card-body text-center d-flex flex-column">
+                <h4 class="card-title">Fernando Ortega Requena</h4>
+                <p class="card-text card-text-truncate flex-grow-1">
+                  Especialista en IA y Bases de Datos. Su metodología "learning by doing" integra Kahoots y retos para motivar al alumnado. Impulsor del concurso CodeBoost.
+                </p>
+                <button class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#modalDocente3">
+                  Ver más
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participante 4 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card participant-card border-warning">
+              <img src="/images/Jorge-Dueñas.jpg" class="card-img-top participant-img" alt="Jorge Dueñas Lerín">
+              <div class="card-body text-center d-flex flex-column">
+                <h4 class="card-title">Jorge Dueñas Lerín</h4>
+                <p class="card-text card-text-truncate flex-grow-1">
+                  Experto en desarrollo móvil y servidor. Coordinador de iniciativas como CodeBoost y proyectos de Aprendizaje-Servicio. Enfocado en el Aprendizaje Basado en Retos.
+                </p>
+                <button class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#modalDocente4">
+                  Ver más
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Participante 5 -->
+          <div class="col-md-6 col-lg-4">
+            <div class="card participant-card border-warning">
+              <img src="/images/foto_kike_gutierrez.jpeg" class="card-img-top participant-img" alt="Enrique Gutiérrez Álvarez">
+              <div class="card-body text-center d-flex flex-column">
+                <h4 class="card-title">Enrique Gutiérrez Álvarez</h4>
+                <p class="card-text card-text-truncate flex-grow-1">
+                  Lidera el proyecto ASCENT para transferir metodologías del MIT. Su enfoque sitúa al estudiante en el centro mediante retos científicos y sociales de impacto real.
+                </p>
+                <button class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#modalDocente5">
+                  Ver más
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modales -->
+    <!-- Modal Elvira -->
+    <div class="modal fade" id="modalElvira" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-warning">Elvira Amador</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <div class="row">
+              <div class="col-md-4 mb-3 mb-md-0">
+                <img src="/images/Elvira-Amador.jpg" class="img-fluid rounded border border-warning" alt="Elvira Amador">
+              </div>
+              <div class="col-md-8">
+                <p>
+                  Elvira Amador Domínguez comenzó su trayectoria docente en el año 2019 con colaboraciones en las asignaturas de Inteligencia Artificial (perteneciente al Grado de Ingeniería Informática), y de Deep Learning para el Procesamiento de Lenguaje Natural (perteneciente al Máster Universitario de Inteligencia Artificial). Desde septiembre de 2023, es Profesora Ayudante Doctora en la ETSISI, impartiendo las asignaturas de Ingeniería de Requisitos y Modelado y Verificación y Validación, ambas pertenecientes al Grado de Ingeniería del Software.
+                </p>
+                <p>
+                  Desde 2023, ha participado en diferentes Proyectos de Innovación Educativa, algunos como coordinadora y otros como equipo de trabajo, enmarcados en su filosofía docente: hacer del aprendizaje algo dinámico y convertir al alumno en parte activa de la experiencia académica. Ha dirigido el proyecto GAVI para incluir la gamificación en Verificación y Validación. Forma parte del Grupo de Innovación Educativa GIETEMA y fue galardonada con el Premio a la Excelencia Docente Emergente de la UPM en 2025.
                 </p>
               </div>
             </div>
           </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Daniel -->
+    <div class="modal fade" id="modalDaniel" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-warning">Daniel López Fernández</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <div class="row">
+              <div class="col-md-4 mb-3 mb-md-0">
+                <img src="/images/dani-fis-foto.jpeg" class="img-fluid rounded border border-warning img-top-focus" alt="Daniel López Fernández">
+              </div>
+              <div class="col-md-8">
+                <p>
+                  Cuando estudiaba en la ETSISI, antes denominada EUI, empecé a impartir clases particulares de matemáticas y física a estudiantes de bachillerato y quedé prendado del mundo de la enseñanza. Tras terminar la carrera (bueno, siendo sincero, mientras terminaba la carrera) empecé a trabajar como informático por las mañanas y por las tardes disfrutaba enseñando materias que iban desde la Programación hasta los Fundamentos de Computadores en academias universitarias y, posteriormente, en centros universitarios. Hace siete años empecé a trabajar en la ETSISI y actualmente imparto las asignaturas de Fundamentos de Ingeniería del Software y Administración y Gestión de Bases de Datos. Mi filosofía siempre ha sido que aprender debe ser una actividad práctica, divertida, significativa e incluso memorable. Con este objetivo, he diseñado y aplicado metodologías innovadoras apoyadas frecuentemente en tecnologías emergentes, como videojuegos educativos, aplicaciones de realidad virtual, escape rooms, aprendizaje basado en LEGO, concursos de memes y, últimamente, también herramientas de Inteligencia Artificial. Estas iniciativas buscan favorecer un aprendizaje divertido y duradero, así como acercar al estudiantado a contextos profesionales reales, fomentando competencias clave como la comunicación y el trabajo en equipo. He participado y coordinado decenas de proyectos de innovación educativa que me han permitido consolidar esta línea de trabajo y fruto de este trabajo recibí el Premio de Innovación Educativa de la UPM en 2022 y recientemente el Grupo de Innovación Educativa GIETEMA que tengo el gusto de coordinar ha sido galardonado también por la UPM.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Docente 3 -->
+    <div class="modal fade" id="modalDocente3" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-warning">Fernando Ortega Requena</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <div class="row">
+              <div class="col-md-4 mb-3 mb-md-0">
+                <img src="/images/fernando-public.jpg" class="img-fluid rounded border border-warning" alt="Fernando Ortega Requena">
+              </div>
+              <div class="col-md-8">
+                <p>
+                  Fernando Ortega es profesor en la ETSI de Sistemas Informáticos desde septiembre de 2018, especializado principalmente en Inteligencia Artificial y Bases de Datos, asignatura que coordina actualmente. Su metodología se centra en el "learning by doing", priorizando las actividades prácticas y la resolución de retos para motivar al alumnado.
+                </p>
+                <p>
+                  Integra elementos de innovación educativa como competiciones tipo Kahoot y sistemas de recompensas. Además, impulsa iniciativas extracurriculares como el concurso de programación CodeBoost, diseñado para potenciar las habilidades técnicas de los estudiantes.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Docente 4 -->
+    <div class="modal fade" id="modalDocente4" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-warning">Jorge Dueñas Lerín</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <div class="row">
+              <div class="col-md-4 mb-3 mb-md-0">
+                <img src="/images/Jorge-Dueñas.jpg" class="img-fluid rounded border border-warning" alt="Jorge Dueñas Lerín">
+              </div>
+              <div class="col-md-8">
+                <p>
+                  Con nueve años de experiencia docente, Jorge se especializa en desarrollo móvil y en entorno servidor. Su curiosidad por el funcionamiento interno de las tecnologías es lo que intenta transmitir en el aula. Ha organizado pruebas como las Madrid Skills y proyectos Erasmus+.
+                </p>
+                <p>
+                  Forma parte del grupo GIETEMA, donde coordina iniciativas como CodeBoost y proyectos de Aprendizaje-Servicio para centros de secundaria. Su reto actual es impulsar la adopción del Aprendizaje Basado en Retos (ABR) dentro de la Escuela.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Docente 5 -->
+    <div class="modal fade" id="modalDocente5" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-warning">Enrique Gutiérrez Álvarez</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <div class="row">
+              <div class="col-md-4 mb-3 mb-md-0">
+                <img src="/images/foto_kike_gutierrez.jpg" class="img-fluid rounded border border-warning" alt="Enrique Gutiérrez Álvarez">
+              </div>
+              <div class="col-md-8">
+                <p>
+                  Especialista en ciencia de datos, su enfoque docente sitúa al estudiante en el centro mediante metodologías basadas en retos y proyectos reales. Ha coordinado proyectos de innovación educativa en la UPM y colaborado en la enseñanza de ciencia para niños de altas capacidades.
+                </p>
+                <p>
+                  Actualmente es co-investigador principal del proyecto ASCENT, que transfiere la metodología CATALYST del MIT al contexto español, culminando con la presentación de proyectos de estudiantes de la UPM en el MIT.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
         </div>
       </div>
     </section>
