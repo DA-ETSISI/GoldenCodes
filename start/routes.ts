@@ -54,5 +54,6 @@ router
 router
   .group(() => {
     router.get('/admin', [() => import('#controllers/admin_controller'), 'index'])
+    router.post('/admin/users/:id/reset', [() => import('#controllers/admin_controller'), 'resetUser'])
   })
   .use(middleware.admin())

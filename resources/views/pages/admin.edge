@@ -56,6 +56,19 @@
 
     <section class="py-5 mt-5">
       <div class="container-fluid px-4">
+        @if(flashMessages.has('success'))
+          <div class="alert alert-success alert-dismissible fade show mb-4">
+            {{ flashMessages.get('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        @endif
+        @if(flashMessages.has('error'))
+          <div class="alert alert-danger alert-dismissible fade show mb-4">
+            {{ flashMessages.get('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="display-5 fw-bold text-dark">
             <i class="fa-solid fa-chart-bar text-warning me-2"></i>Resultados en Tiempo Real
@@ -98,14 +111,21 @@
                   @if(searchedUser)
                     <div class="row">
                       <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="p-3 bg-light rounded shadow-sm">
+                        <div class="p-3 bg-light rounded shadow-sm h-100">
                           <h6 class="text-uppercase text-muted small fw-bold mb-3">
                             Información del Usuario
                           </h6>
                           <p class="mb-1"><strong>Nombre:</strong> {{ searchedUser.nombre || 'N/A' }}</p>
                           <p class="mb-1"><strong>Email:</strong> {{ searchedUser.email }}</p>
                           <p class="mb-1"><strong>Rol:</strong> <span class="badge bg-warning text-dark">{{ searchedUser.rol || 'Sin asignar' }}</span></p>
-                          <p class="mb-0"><strong>Votos realizados:</strong> <span class="badge bg-dark">{{ userVotes.length }}</span></p>
+                          <p class="mb-3"><strong>Votos realizados:</strong> <span class="badge bg-dark">{{ userVotes.length }}</span></p>
+                          <hr />
+                          <form action="/admin/users/{{ searchedUser.id }}/reset" method="POST" onsubmit="return confirm('¿Estás SEGURO de que quieres eliminar todos los votos de este usuario y resetear su perfil? Esta acción descontará sus votos de los candidatos y no se puede deshacer.');">
+                            {{ csrfField() }}
+                            <button type="submit" class="btn btn-outline-danger w-100 btn-sm">
+                              <i class="fa-solid fa-trash-can me-2"></i>Eliminar Votos y Resetear
+                            </button>
+                          </form>
                         </div>
                       </div>
                       <div class="col-md-8">

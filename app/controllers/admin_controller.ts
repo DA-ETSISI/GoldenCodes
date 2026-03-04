@@ -63,4 +63,38 @@ export default class AdminController {
     session.forget('isAdmin')
     return response.redirect('/')
   }
+
+  async resetUser({ params, response, session }: HttpContext) {
+    const userId = params.id
+    const User = (await import('#models/user')).default
+    const user = await User.find(userId)
+
+    if (!user) {
+      session.flash('error', 'Usuario no encontrado.')
+      return response.redirect().back()
+    }
+
+    const Vote = (await import('#models/vote')).default
+    const userVotes = await Vote.query().where('userId', user.id)
+
+    // Decrement vote counts from participants
+    for (const vote of userVotes) {
+      const Participante = (await import('#models/participante')).default
+      const p = await Participante.find(vote.participanteId)
+      if (p) {
+        p.numero_votos = Math.max(0, p.numero_votos - 1)
+        await p.save()
+      }
+      await vote.delete()
+    }
+
+    // Reset user profile
+    user.rol = null
+    user.curso = null
+    user.grado = null
+    await user.save()
+
+    session.flash('success', `Se han eliminado los ${userVotes.length} votos y se ha reseteado el perfil de ${user.email}.`)
+    return response.redirect().back()
+  }
 }
