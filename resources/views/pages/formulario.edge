@@ -563,8 +563,15 @@
               if (curso === '1') hasAccess = (cat.name === 'Primer curso (Grados)');
               else if (curso === '2') hasAccess = (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)');
               else if (curso === '3/4') {
-                if (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)') hasAccess = true;
-                else {
+                if (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)') {
+                    // Exclusive rule for 3/4: if they voted in MD1, they can't vote in MD2 (and vice versa)
+                    const other = cat.name === 'Primer curso (Grados)' ? 'Segundo curso (Grados)' : 'Primer curso (Grados)';
+                    if (votesByCategory[other] && votesByCategory[other] > 0) {
+                        hasAccess = false;
+                    } else {
+                        hasAccess = true;
+                    }
+                } else {
                   const degreeCats = {
                     'Software': 'Tercer y cuarto curso (Software)',
                     'Computadores': 'Tercer y cuarto curso (Computadores)',
