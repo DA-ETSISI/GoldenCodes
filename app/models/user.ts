@@ -25,6 +25,12 @@ export default class User extends BaseModel {
   @column()
   declare rol: string | null
 
+  @column()
+  declare curso: string | null
+
+  @column()
+  declare grado: string | null
+
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 

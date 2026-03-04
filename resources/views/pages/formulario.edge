@@ -133,12 +133,22 @@
                   <p>
                     <strong>Perfil:</strong>                    <span class="badge bg-warning text-dark fs-6">{{ user.rol }}</span>
                   </p>
+                  @if(user.curso)
+                    <p>
+                      <strong>Curso:</strong>                      <span>{{ user.curso == '1' ? '1º' : user.curso == '2' ? '2º' : user.curso == '3/4' ? '3º/4º' : user.curso }}</span>
+                    </p>
+                  @endif
+                  @if(user.grado)
+                    <p>
+                      <strong>Grado/Especialidad:</strong>                      <span>{{ user.grado }}</span>
+                    </p>
+                  @endif
                   <hr />
                   <h6>
-                    Tus votos registrados ({{ userVotes.length }}):
+                    Tus votos registrados (<span id="vote-count-badge">{{ userVotes.length }}</span>):
                   </h6>
-                  @if(userVotes.length > 0)
-                    <ul class="list-group list-group-flush small">
+                  @if(userVotes.length >= 0)
+                    <ul class="list-group list-group-flush small" id="votes-summary-list">
                       @each(v in userVotes)
                         <li class="list-group-item px-0">
                           <strong>{{ v.categoria }}:</strong>                          <br />
@@ -175,7 +185,7 @@
 
           <!-- Columna Derecha: Formulario de Votación -->
           <div class="col-lg-8">
-            @if(!user.rol)
+            @if(!user.rol || (user.rol === 'Estudiante' && !user.curso))
               <!-- Configurar Perfil Inicial -->
               <div class="card shadow border-0" id="setup-profile">
                 <div class="card-header bg-warning">
@@ -185,25 +195,51 @@
                 </div>
                 <div class="card-body p-4">
                   <p>
-                    Antes de comenzar, dinos a qué colectivo perteneces para mostrarte las categorías correspondientes.
+                    {{ user.rol === 'Estudiante' ? 'Hola, necesitamos que selecciones tu curso antes de comenzar a votar.' : 'Antes de comenzar, dinos a qué colectivo perteneces para mostrarte las categorías correspondientes.' }}
                   </p>
                   <form id="rol-form">
-                    <div class="mb-3">
+                    <div class="mb-3" style="{{ user.rol ? 'display:none;' : '' }}">
                       <label class="form-label">Perfil / Colectivo</label>
                       <select id="user-rol" class="form-select" required>
-                        <option value="" disabled selected>
+                        <option value="" disabled {{ !user.rol ? 'selected' : '' }}>
                           Selecciona una opción
                         </option>
-                        <option value="PDI">
+                        <option value="PDI" {{ user.rol === 'PDI' ? 'selected' : '' }}>
                           Personal Docente e Investigador (PDI)
                         </option>
-                        <option value="PTGAS">
+                        <option value="PTGAS" {{ user.rol === 'PTGAS' ? 'selected' : '' }}>
                           Personal Técnico, de Gestión y Administración (PTGAS)
                         </option>
-                        <option value="Estudiante">
+                        <option value="Estudiante" {{ user.rol === 'Estudiante' ? 'selected' : '' }}>
                           Estudiante
                         </option>
                       </select>
+                    </div>
+
+                    <!-- Campos adicionales para Estudiante -->
+                    <div id="estudiante-fields" style="{{ user.rol === 'Estudiante' ? 'display:block;' : 'display:none;' }}">
+                      <div class="mb-3">
+                        <label class="form-label">Curso</label>
+                        <select id="user-curso" class="form-select">
+                          <option value="" disabled selected>Selecciona tu curso</option>
+                          <option value="1">1º Curso (Grados)</option>
+                          <option value="2">2º Curso (Grados)</option>
+                          <option value="3/4">3º/4º Curso (Grados)</option>
+                          <option value="CDIA">CDIA</option>
+                          <option value="Master">Máster</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3" id="grado-container" style="display:none;">
+                        <label class="form-label">Grado / Especialidad (3º/4º)</label>
+                        <select id="user-grado" class="form-select">
+                          <option value="" disabled selected>Selecciona tu grado</option>
+                          <option value="Software">Ingeniería del Software</option>
+                          <option value="Computadores">Ingeniería de Computadores</option>
+                          <option value="TSI">Tecnologías de la Soc. de la Información</option>
+                          <option value="Sistemas">Sistemas de Información</option>
+                        </select>
+                      </div>
                     </div>
                     <button type="button" class="btn btn-dark w-100" id="btn-save-rol">
                       Aplicar y Empezar a Votar
@@ -217,12 +253,14 @@
                 <form
                   action="/votacion"
                   method="POST"
-                  id="main-form"
-                  class="p-4 rounded border-top border-5 border-warning"
+                  id="main-form-setup"
+                  class="p-4 rounded border-top border-5 border-warning ajax-vote-form"
                 >
                   {{ csrfField() }}
                   <!-- Campos ocultos para enviar rol si se acaba de configurar -->
                   <input type="hidden" name="rol" id="hidden-rol" />
+                  <input type="hidden" name="curso" id="hidden-curso" />
+                  <input type="hidden" name="grado" id="hidden-grado" />
 
                   <h4 class="mb-3">
                     Selecciona tu voto
@@ -260,8 +298,7 @@
 
                   <button
                     type="submit"
-                    id="btn-submit-vote"
-                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm"
+                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm btn-submit-vote"
                   >
                     <i class="fa-solid fa-paper-plane me-2"></i>Emitir Voto
                                 </button>
@@ -270,12 +307,12 @@
 
             @else
               <!-- Formulario de Votación directo para usuarios ya configurados -->
-              <div class="card shadow border-0" id="main-voting-area">
+              <div class="card shadow border-0" id="main-voting-area-direct">
                 <form
                   action="/votacion"
                   method="POST"
-                  id="main-form"
-                  class="p-4 rounded border-top border-5 border-warning"
+                  id="main-form-direct"
+                  class="p-4 rounded border-top border-5 border-warning ajax-vote-form"
                 >
                   {{ csrfField() }}
                   <h4 class="mb-3">
@@ -313,8 +350,7 @@
 
                   <button
                     type="submit"
-                    id="btn-submit-vote"
-                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm"
+                    class="btn btn-voto w-100 py-3 text-uppercase fw-bold shadow-sm btn-submit-vote"
                   >
                     <i class="fa-solid fa-paper-plane me-2"></i>Emitir Voto
                                 </button>
@@ -329,10 +365,13 @@
     <!-- Modal JS Data -->
     <script>
       const userRol = "{{ user.rol || '' }}";
+      const userCurso = "{{ user.curso || '' }}";
+      const userGrado = "{{ user.grado || '' }}";
 
       const allProfesores = {{{ JSON.stringify(profesores) }}};
 
-      const votesByCategory = {{{ JSON.stringify(votesByCategory) }}};
+      let votesByCategory = {{{ JSON.stringify(votesByCategory) }}};
+      let userVotesList = {{{ JSON.stringify(userVotesJson) }}};
       // Define Hierarchy
 
       const groupsData = {
@@ -418,14 +457,74 @@
       const catHelp = document.getElementById("cat-help");
 
       const btnSubmitVote = document.getElementById("btn-submit-vote");
+
+      const divEstudianteFields = document.getElementById("estudiante-fields");
+      const selectCurso = document.getElementById("user-curso");
+      const selectGrado = document.getElementById("user-grado");
+      const divGradoContainer = document.getElementById("grado-container");
+      
+      const hiddenCurso = document.getElementById("hidden-curso");
+      const hiddenGrado = document.getElementById("hidden-grado");
+
+      const votesSummaryList = document.getElementById("votes-summary-list");
+      const voteCountBadge = document.getElementById("vote-count-badge");
+      
+      const btnSubmitVotes = document.querySelectorAll(".btn-submit-vote");
       // Helper to populate main categories
 
-      function populateMainCategories(rol) {
+      function populateMainCategories(rol, curso, grado) {
         if (!selectMainCat) return;
         selectMainCat.innerHTML = '<option value="" disabled selected>Elige un grupo de premios</option>';
         Object.keys(groupsData).forEach(groupName => {
           // Check if user role has at least ONE subcategory in this group
-          const hasAccess = groupsData[groupName].some(cat => cat.roles.includes(rol));
+          const hasAccess = groupsData[groupName].some(cat => {
+            const basicRoleAccess = cat.roles.includes(rol);
+            if (rol !== 'Estudiante' || !basicRoleAccess) return basicRoleAccess;
+
+            // If it's an academic category, check course-specific access
+            const academicCats = [
+              'Primer curso (Grados)', 'Segundo curso (Grados)', 
+              'Tercer y cuarto curso (Software)', 'Tercer y cuarto curso (Computadores)', 
+              'Tercer y cuarto curso (TSI)', 'Tercer y cuarto curso (Sistemas de Información)',
+              'Grado en CDIA', 'Másteres universitarios'
+            ];
+            
+            let courseAccess = true;
+            if (academicCats.includes(cat.name)) {
+              // Filtering logic for students
+              if (curso === '1') courseAccess = (cat.name === 'Primer curso (Grados)');
+              else if (curso === '2') courseAccess = (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)');
+              else if (curso === '3/4') {
+                if (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)') courseAccess = true;
+                else {
+                  const degreeCats = {
+                    'Software': 'Tercer y cuarto curso (Software)',
+                    'Computadores': 'Tercer y cuarto curso (Computadores)',
+                    'TSI': 'Tercer y cuarto curso (TSI)',
+                    'Sistemas': 'Tercer y cuarto curso (Sistemas de Información)'
+                  };
+                  courseAccess = (cat.name === degreeCats[grado]);
+                }
+              }
+              else if (curso === 'CDIA') courseAccess = (cat.name === 'Grado en CDIA');
+              else if (curso === 'Master') courseAccess = (cat.name === 'Másteres universitarios');
+              else courseAccess = false;
+            }
+
+            if (!courseAccess) return false;
+
+            // Also check if there are votes remaining in this group/category
+            let aggregateUsed = votesByCategory[cat.name] || 0;
+            
+            // Exclusive rule for 3/4: if they voted in MD1, they can't vote in MD2 (and vice versa)
+            if (rol === 'Estudiante' && curso === '3/4' && (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)')) {
+                const other = cat.name === 'Primer curso (Grados)' ? 'Segundo curso (Grados)' : 'Primer curso (Grados)';
+                if (votesByCategory[other] && votesByCategory[other] > 0) return false;
+            }
+
+            return aggregateUsed < cat.max;
+          });
+
           if (hasAccess) {
             const option = document.createElement("option");
             option.value = groupName;
@@ -436,7 +535,7 @@
       }
       // Populates subcategories when a main category is chosen
 
-      function populateSubCategories(groupName, rol) {
+      function populateSubCategories(groupName, rol, curso, grado) {
         if (!selectCategoria) return;
         selectCategoria.innerHTML = '<option value="" disabled selected>Elige un curso o variante</option>';
         selectCategoria.disabled = false;
@@ -450,15 +549,45 @@
           });
         }
         subcats.forEach(cat => {
-          if (cat.roles.includes(rol)) {
+          let hasAccess = cat.roles.includes(rol);
+          
+          if (hasAccess && rol === 'Estudiante') {
+            const academicCats = [
+              'Primer curso (Grados)', 'Segundo curso (Grados)', 
+              'Tercer y cuarto curso (Software)', 'Tercer y cuarto curso (Computadores)', 
+              'Tercer y cuarto curso (TSI)', 'Tercer y cuarto curso (Sistemas de Información)',
+              'Grado en CDIA', 'Másteres universitarios'
+            ];
+            
+            if (academicCats.includes(cat.name)) {
+              if (curso === '1') hasAccess = (cat.name === 'Primer curso (Grados)');
+              else if (curso === '2') hasAccess = (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)');
+              else if (curso === '3/4') {
+                if (cat.name === 'Primer curso (Grados)' || cat.name === 'Segundo curso (Grados)') hasAccess = true;
+                else {
+                  const degreeCats = {
+                    'Software': 'Tercer y cuarto curso (Software)',
+                    'Computadores': 'Tercer y cuarto curso (Computadores)',
+                    'TSI': 'Tercer y cuarto curso (TSI)',
+                    'Sistemas': 'Tercer y cuarto curso (Sistemas de Información)'
+                  };
+                  hasAccess = (cat.name === degreeCats[grado]);
+                }
+              }
+              else if (curso === 'CDIA') hasAccess = (cat.name === 'Grado en CDIA');
+              else if (curso === 'Master') hasAccess = (cat.name === 'Másteres universitarios');
+              else hasAccess = false;
+            }
+          }
+
+          if (hasAccess) {
             const option = document.createElement("option");
             option.value = cat.name;
-            const used = groupName === "Mérito Docente" ? aggregateUsed : votesByCategory[cat.name] || 0;
+            const used = votesByCategory[cat.name] || 0;
             const remaining = cat.max - used;
             if (remaining <= 0) {
-              option.textContent = `${cat.name} (Límite de ${cat.max} alcanzado en total)`;
-              option.disabled = true;
-              option.className = "text-danger";
+              // Option is not even created (hidden)
+              return;
             } else {
               option.textContent = `${cat.name} (${remaining} votos restantes en total)`;
             }
@@ -470,36 +599,214 @@
         });
       }
 
+      function updateVotesUI() {
+          if (!votesSummaryList) return;
+          votesSummaryList.innerHTML = "";
+          userVotesList.forEach(v => {
+              const li = document.createElement("li");
+              li.className = "list-group-item px-0";
+              li.innerHTML = `<strong>${v.categoria}:</strong><br />
+                  <span class="text-muted"><i class="fa-solid fa-check text-success"></i> ${v.participante?.nombreCompleto || 'Candidato'}</span>`;
+                  votesSummaryList.appendChild(li);
+          });
+          voteCountBadge.textContent = userVotesList.length;
+      }
+
+      document.querySelectorAll(".ajax-vote-form").forEach(form => {
+          form.addEventListener("submit", async function(e) {
+              e.preventDefault();
+              
+              const btn = this.querySelector(".btn-submit-vote");
+              const originalBtnHtml = btn.innerHTML;
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Registrando...';
+
+              const formData = new FormData(this);
+              // Ensure we pick up the latest role/course/grado from hidden fields or global constants
+              const activeRol = userRol || (hiddenRol ? hiddenRol.value : '');
+              const activeCurso = userCurso || (hiddenCurso ? hiddenCurso.value : '');
+              const activeGrado = userGrado || (hiddenGrado ? hiddenGrado.value : '');
+              
+              if (activeRol) formData.set('rol', activeRol);
+              if (activeCurso) formData.set('curso', activeCurso);
+              if (activeGrado) formData.set('grado', activeGrado);
+              formData.set('_format', 'json');
+
+              const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
+              
+              try {
+                  const response = await fetch('/votacion', {
+                      method: 'POST',
+                      body: formData,
+                      headers: {
+                          'Accept': 'application/json',
+                          'X-Requested-With': 'XMLHttpRequest',
+                          'X-Is-Ajax': 'true',
+                          'X-CSRF-TOKEN': csrfToken
+                      }
+                  });
+
+                  // Detect silent redirections (e.g., session timeout redirecting to /login)
+                  if (response.redirected && !response.url.includes('/votacion')) {
+                      throw new Error("Sesión expirada o redirección inesperada a: " + response.url);
+                  }
+
+                  if (!response.ok) {
+                      const contentType = response.headers.get("content-type");
+                      if (contentType && contentType.includes("application/json")) {
+                          const json = await response.json();
+                          throw new Error(json.message || "Error en el servidor");
+                      } else {
+                          const text = await response.text();
+                          console.error("Non-JSON error response", text);
+                          throw new Error("El servidor devolvió una respuesta inesperada (HTML). Posible error de sesión o CSRF.");
+                      }
+                  }
+
+                  const contentType = response.headers.get("content-type");
+                  if (!contentType || !contentType.includes("application/json")) {
+                      throw new Error("El servidor no devolvió JSON. Posible redirección inesperada.");
+                  }
+
+                  const result = await response.json();
+
+                  if (result.success) {
+                      userVotesList = result.userVotes;
+                      // Re-calculate votesByCategory
+                      votesByCategory = {};
+                      userVotesList.forEach(v => {
+                          votesByCategory[v.categoria] = (votesByCategory[v.categoria] || 0) + 1;
+                      });
+
+                      updateVotesUI();
+                      
+                      // Remove any existing alerts first
+                      const existingAlerts = this.parentNode.querySelectorAll(".alert-success, .alert-danger");
+                      existingAlerts.forEach(a => a.remove());
+
+                      // Show success alert
+                      const alertDiv = document.createElement("div");
+                      alertDiv.className = "alert alert-success alert-dismissible fade show mt-3";
+                      alertDiv.innerHTML = `${result.message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+                      this.parentNode.insertBefore(alertDiv, this);
+                      
+                      // Smooth scroll to alert
+                      alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                      // Maintain category group and category if possible
+                      const currentMain = selectMainCat.value;
+                      const currentCat = selectCategoria.value;
+
+                      populateMainCategories(activeRol, activeCurso, activeGrado);
+                      if (currentMain) {
+                        selectMainCat.value = currentMain;
+                        populateSubCategories(currentMain, activeRol, activeCurso, activeGrado);
+                        
+                        // Check if the category is still available
+                        let catExists = Array.from(selectCategoria.options).some(o => o.value === currentCat);
+                        if (catExists) {
+                            selectCategoria.value = currentCat;
+                            // Trigger change to refresh teacher list
+                            selectCategoria.dispatchEvent(new Event('change'));
+                        } else {
+                            selectProfesor.innerHTML = '<option value="" disabled selected>Primero elige una variante</option>';
+                            selectProfesor.disabled = true;
+                            catHelp.innerHTML = "";
+                        }
+                      }
+
+                  } else {
+                      // Show error alert instead of alert() box for better UX
+                      const alertDiv = document.createElement("div");
+                      alertDiv.className = "alert alert-danger alert-dismissible fade show mt-3";
+                      alertDiv.innerHTML = `${result.message || "Error al registrar el voto"}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+                      this.parentNode.insertBefore(alertDiv, this);
+                      alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+              } catch (error) {
+                  console.error(error);
+                  const alertDiv = document.createElement("div");
+                  alertDiv.className = "alert alert-danger alert-dismissible fade show mt-3";
+                  alertDiv.innerHTML = `<strong>Error:</strong> ${error.message || "Error de conexión al enviar el voto"}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+                  this.parentNode.insertBefore(alertDiv, this);
+                  alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              } finally {
+                  btn.disabled = false;
+                  btn.innerHTML = originalBtnHtml;
+              }
+          });
+      });
+
       if (selectRol) {
+        selectRol.addEventListener("change", function() {
+          if (this.value === 'Estudiante') {
+            divEstudianteFields.style.display = 'block';
+          } else {
+            divEstudianteFields.style.display = 'none';
+          }
+        });
+
+        if (selectCurso) {
+          selectCurso.addEventListener("change", function() {
+            if (this.value === '3/4') {
+              divGradoContainer.style.display = 'block';
+            } else {
+              divGradoContainer.style.display = 'none';
+              selectGrado.value = "";
+            }
+          });
+        }
+
         btnSaveRol.addEventListener("click", function() {
           if (!selectRol.value) {
             alert("Por favor selecciona un perfil");
             return;
           }
+          
+          if (selectRol.value === 'Estudiante') {
+            if (!selectCurso.value) {
+              alert("Por favor selecciona tu curso");
+              return;
+            }
+            if (selectCurso.value === '3/4' && !selectGrado.value) {
+              alert("Por favor selecciona tu grado");
+              return;
+            }
+          }
+
           // Show form conditionally
           setupProfileArea.style.display = "none";
           mainVotingArea.style.display = "block";
           const chosenRol = selectRol.value;
+          const chosenCurso = selectCurso.value;
+          const chosenGrado = selectGrado.value;
+          
           hiddenRol.value = chosenRol;
-          populateMainCategories(chosenRol);
+          hiddenCurso.value = chosenCurso;
+          hiddenGrado.value = chosenGrado;
+          
+          populateMainCategories(chosenRol, chosenCurso, chosenGrado);
         });
       }
       // If rol is already set
 
       if (userRol) {
-        populateMainCategories(userRol);
+        populateMainCategories(userRol, userCurso, userGrado);
       }
       // Main category change event
 
       if (selectMainCat) {
         selectMainCat.addEventListener("change", function() {
           const groupName = this.options[this.selectedIndex].value;
-          const activeRol = userRol || document.getElementById("hidden-rol").value;
+          const activeRol = userRol || (hiddenRol ? hiddenRol.value : '');
+          const activeCurso = userCurso || (hiddenCurso ? hiddenCurso.value : '');
+          const activeGrado = userGrado || (hiddenGrado ? hiddenGrado.value : '');
+
           // Reset child dropdowns
           selectProfesor.innerHTML = '<option value="" disabled selected>Primero elige una variante</option>';
           selectProfesor.disabled = true;
-          catHelp.innerHTML = "";
-          populateSubCategories(groupName, activeRol);
+          if (catHelp) catHelp.innerHTML = "";
+          populateSubCategories(groupName, activeRol, activeCurso, activeGrado);
         });
       }
       // Behavior when category is selected
