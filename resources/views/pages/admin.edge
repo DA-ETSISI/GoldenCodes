@@ -60,10 +60,93 @@
           <h2 class="display-5 fw-bold text-dark">
             <i class="fa-solid fa-chart-bar text-warning me-2"></i>Resultados en Tiempo Real
           </h2>
-          <button class="btn btn-dark" onclick="window.location.reload();">
-            <i class="fa-solid fa-rotate-right me-2"></i>Actualizar Datos
-                </button>
+          <div class="d-flex gap-2">
+            <form action="/admin" method="GET" class="d-flex gap-2">
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="Buscar por correo..."
+                value="{{ searchEmail || '' }}"
+                required
+              />
+              <button type="submit" class="btn btn-warning fw-bold">
+                <i class="fa-solid fa-magnifying-glass me-2"></i>Buscar Votos
+              </button>
+            </form>
+            @if(searchedUser || searchEmail)
+              <a href="/admin" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-xmark me-2"></i>Limpiar
+              </a>
+            @endif
+            <button class="btn btn-dark" onclick="window.location.reload();">
+              <i class="fa-solid fa-rotate-right me-2"></i>Actualizar Datos
+            </button>
+          </div>
         </div>
+
+        @if(searchEmail)
+          <div class="row mb-5">
+            <div class="col-12">
+              <div class="card shadow-sm border-0 border-start border-warning border-5">
+                <div class="card-header bg-dark text-white py-3">
+                  <h5 class="mb-0">
+                    <i class="fa-solid fa-search me-2"></i>Resultado de Búsqueda para: {{ searchEmail }}
+                  </h5>
+                </div>
+                <div class="card-body">
+                  @if(searchedUser)
+                    <div class="row">
+                      <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="p-3 bg-light rounded shadow-sm">
+                          <h6 class="text-uppercase text-muted small fw-bold mb-3">
+                            Información del Usuario
+                          </h6>
+                          <p class="mb-1"><strong>Nombre:</strong> {{ searchedUser.nombre || 'N/A' }}</p>
+                          <p class="mb-1"><strong>Email:</strong> {{ searchedUser.email }}</p>
+                          <p class="mb-1"><strong>Rol:</strong> <span class="badge bg-warning text-dark">{{ searchedUser.rol || 'Sin asignar' }}</span></p>
+                          <p class="mb-0"><strong>Votos realizados:</strong> <span class="badge bg-dark">{{ userVotes.length }}</span></p>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        @if(userVotes.length > 0)
+                          <div class="table-responsive">
+                            <table class="table table-sm table-hover border">
+                              <thead class="table-light">
+                                <tr>
+                                  <th>Categoría</th>
+                                  <th>Candidato Votado</th>
+                                  <th>Fecha</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @each(v in userVotes)
+                                  <tr>
+                                    <td class="small">{{ v.categoria }}</td>
+                                    <td class="fw-bold">{{ v.participante.nombreCompleto }}</td>
+                                    <td class="small text-muted">{{ v.createdAt.toFormat('dd/MM HH:mm') }}</td>
+                                  </tr>
+                                @endeach
+                              </tbody>
+                            </table>
+                          </div>
+                        @else
+                          <div class="alert alert-info mb-0">
+                            <i class="fa-solid fa-circle-info me-2"></i>Este usuario no ha registrado ningún voto todavía.
+                          </div>
+                        @endif
+                      </div>
+                    </div>
+                  @else
+                    <div class="alert alert-danger mb-0">
+                      <i class="fa-solid fa-triangle-exclamation me-2"></i>No se ha encontrado ninguna cuenta registrada con el correo <strong>{{ searchEmail }}</strong>.
+                    </div>
+                  @endif
+                </div>
+              </div>
+            </div>
+          </div>
+        @endif
 
         <div class="row">
           @each((participantes, categoria) in groupedResults)

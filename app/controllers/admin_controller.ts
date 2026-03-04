@@ -3,10 +3,22 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Participante from '#models/participante'
 
 export default class AdminController {
-  async index({ view }: HttpContext) {
-    // Fetch all to show zeros if wanted, but "who have been voted" implies > 0.
-    // Let's bring all of them so the admin sees the full map,
-    // but sort by votes desc.
+  async index({ view, request }: HttpContext) {
+    // 1. Fetch search results if email is provided
+    const searchEmail = request.input('email')
+    let searchedUser: any = null
+    let userVotes: any[] = []
+
+    if (searchEmail) {
+      const User = (await import('#models/user')).default
+      searchedUser = await User.query().where('email', searchEmail).first()
+      if (searchedUser) {
+        const Vote = (await import('#models/vote')).default
+        userVotes = await Vote.query().where('userId', searchedUser.id).preload('participante')
+      }
+    }
+
+    // 2. Fetch all participants for general results
     const allParticipantes = await Participante.query().orderBy('numero_votos', 'desc')
 
     // Group by category
@@ -19,7 +31,12 @@ export default class AdminController {
       groupedResults[p.categoria].push(p)
     })
 
-    return view.render('pages/admin', { groupedResults })
+    return view.render('pages/admin', {
+      groupedResults,
+      searchedUser,
+      userVotes,
+      searchEmail,
+    })
   }
 
   async showLogin({ view }: HttpContext) {
