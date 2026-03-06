@@ -54,7 +54,7 @@ export default class AuthController {
     // Autenticar automáticamente
     await auth.use('web').login(user)
 
-    return response.redirect('/')
+    return response.redirect('/votacion')
   }
 
   async showLogin({ view, response }: HttpContext) {
@@ -86,7 +86,7 @@ export default class AuthController {
 
       await auth.use('web').login(user)
 
-      return response.redirect('/')
+      return response.redirect('/votacion')
     } catch (error) {
       session.flash('error', 'Error al iniciar sesión.')
       return response.redirect().back()
@@ -188,7 +188,7 @@ export default class AuthController {
       await auth.use('web').login(user)
 
       session.flash('success', `¡Bienvenido ${user.nombre}!`)
-      return response.redirect('/')
+      return response.redirect('/votacion')
     } catch (error) {
       console.error('OIDC Error:', error)
       session.flash('error', 'Error en la autenticación OIDC.')

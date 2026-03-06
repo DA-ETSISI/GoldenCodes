@@ -1,8 +1,178 @@
-<h1>
-  {{ error.code }} - Server error
-</h1>
-<p>
-  This template is rendered by the
-  <a href="http://docs.adonisjs.com/guides/exception-handling#status-pages">status pages feature</a>
-  of the global exception handler.
-</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ error.code || '500' }} - Error del Servidor | Códigos de Oro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --color-negro: #000000;
+            --color-oro: #FFD700;
+            --color-naranja: #FFA500;
+            --color-gris-oscuro: #111111;
+            --color-gris-fondo: #1a1a1a;
+            --color-rojo: #FF4D4D;
+        }
+
+        body {
+            background-color: var(--color-negro);
+            color: var(--color-oro);
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, var(--color-gris-oscuro) 0%, var(--color-negro) 100%);
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .error-code {
+            font-family: 'Playfair Display', serif;
+            font-size: 10rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(255, 77, 77, 0.3);
+            background: linear-gradient(135deg, var(--color-oro) 0%, var(--color-rojo) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .error-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--color-oro);
+        }
+
+        .error-description {
+            font-size: 1.1rem;
+            color: rgba(255, 215, 0, 0.7);
+            max-width: 500px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-custom {
+            font-weight: 700;
+            padding: 12px 35px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--color-oro);
+            color: var(--color-negro);
+            border: 2px solid var(--color-oro);
+        }
+
+        .btn-primary-custom:hover {
+            background-color: transparent;
+            color: var(--color-oro);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-secondary-custom {
+            background-color: transparent;
+            color: var(--color-oro);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .btn-secondary-custom:hover {
+            border-color: var(--color-oro);
+            background-color: rgba(255, 215, 0, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .warning-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--color-rojo);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Debug info only for local environment */
+        .debug-info {
+            margin-top: 4rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="warning-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="error-code">{{ error.code || '500' }}</div>
+        <h1 class="error-message">Error en la Gala</h1>
+        <p class="error-description">
+            Parece que algo ha fallado entre bastidores. Nuestros técnicos están revisando la iluminación y el sonido para que todo vuelva a brillar cuanto antes.
+        </p>
+        
+        <div class="btn-group">
+            <a href="/" class="btn-custom btn-primary-custom">
+                <i class="fa-solid fa-house"></i>
+                Volver al inicio
+            </a>
+            <button onclick="window.location.reload()" class="btn-custom btn-secondary-custom">
+                <i class="fa-solid fa-rotate-right"></i>
+                Reintentar
+            </button>
+        </div>
+
+        @if(app.inDev)
+            <div class="debug-info" style="display: block;">
+                <strong>Debug Info:</strong>
+                <pre>{{ error.stack }}</pre>
+            </div>
+        @endif
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
