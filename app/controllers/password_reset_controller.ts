@@ -39,7 +39,7 @@ export default class PasswordResetController {
                     .subject('Recuperar contraseña - Códigos de Oro')
                     .htmlView('emails/password_reset', {
                         user,
-                        url: `${env.get('APP_URL', 'http://localhost:3333')}/reset-password?token=${token}&email=${email}`,
+                        url: `${env.get('APP_URL')}/reset-password?token=${token}&email=${email}`,
                     })
             })
             .catch((error: any) => {

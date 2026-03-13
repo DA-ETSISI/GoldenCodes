@@ -54,7 +54,7 @@ export default class AuthController {
           .subject('Verifica tu correo - Códigos de Oro')
           .htmlView('emails/verify_email', {
             user,
-            url: `${env.get('APP_URL', 'http://localhost:3333')}/verify-email?token=${verificationToken}&email=${user.email}`,
+            url: `${env.get('APP_URL')}/verify-email?token=${verificationToken}&email=${user.email}`,
           })
       })
       .catch((error: any) => {
@@ -279,7 +279,7 @@ export default class AuthController {
         .subject('Recuperar contraseña - Códigos de Oro')
         .htmlView('emails/reset_password', {
           user: user,
-          url: `${env.get('APP_URL', 'http://localhost:3333')}/reset-password?token=${token}&email=${email}`,
+          url: `${env.get('APP_URL')}/reset-password?token=${token}&email=${email}`,
         })
     }).catch(err => console.error('Error sending reset email:', err))
 
