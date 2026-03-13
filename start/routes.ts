@@ -27,6 +27,7 @@ router
       () => import('#controllers/auth_controller'),
       'oidcCallback',
     ])
+    router.get('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail'])
   })
   .use(middleware.guest())
 
@@ -38,7 +39,9 @@ router
 router
   .group(() => {
     router.get('/votacion', [() => import('#controllers/formulario_controller'), 'show'])
-    router.post('/votacion', [() => import('#controllers/formulario_controller'), 'store'])
+    router.post('/votacion', [() => import('#controllers/formulario_controller'), 'store']).use(
+      middleware.verified()
+    )
     router.get('/mi-voto', [() => import('#controllers/users_controller'), 'myVote'])
   })
   .use(middleware.auth())

@@ -31,6 +31,12 @@ export default class User extends BaseModel {
   @column()
   declare grado: string | null
 
+  @column()
+  declare isVerified: boolean
+
+  @column()
+  declare emailVerificationToken: string | null
+
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 

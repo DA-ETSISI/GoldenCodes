@@ -2,6 +2,8 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import crypto from 'node:crypto'
+import mail from '@adonisjs/mail/services/main'
+import env from '#start/env'
 
 export default class AuthController {
   async showRegister({ view }: HttpContext) {
@@ -18,52 +20,76 @@ export default class AuthController {
       return response.redirect().back()
     }
 
-    // Validar que el email no esté registrado o actualizar si ya existe alumno
-    let user = await User.findBy('email', email)
-    if (user) {
-      if (email.endsWith('@alumnos.upm.es')) {
-        // Si es un alumno que ya existía en bbdd, reclamará su cuenta sobrescribiendo la contraseña
-        user.password = password
-        await user.save()
-        session.flash(
-          'success',
-          'Cuenta reclamada: Contraseña actualizada correctamente. ¡Bienvenido!'
-        )
-      } else {
-        session.flash('error', 'Este correo electrónico ya está registrado.')
-        return response.redirect().back()
-      }
-    } else {
-      if (email.endsWith('@alumnos.upm.es')) {
-        session.flash(
-          'error',
-          'El correo de alumno no figura en el censo. Contacta con administración.'
-        )
-        return response.redirect().back()
-      }
-
-      // Crear el usuario si no existe (por ejemplo, PDI o PTGAS con @upm.es permitidos)
-      user = await User.create({
-        nombre,
-        email,
-        password,
-      })
-      session.flash('success', '¡Registro exitoso! Bienvenido.')
+    // Validar que el email no esté registrado
+    const existingUser = await User.findBy('email', email)
+    if (existingUser) {
+      session.flash('error', 'Este correo electrónico ya está registrado.')
+      return response.redirect().back()
     }
 
-    // Autenticar automáticamente
+    // Generar token de verificación
+    const verificationToken = crypto.randomBytes(32).toString('hex')
+
+    // Crear el usuario
+    const user = await User.create({
+      nombre,
+      email,
+      password,
+      emailVerificationToken: verificationToken,
+      isVerified: false,
+    })
+
+    session.flash(
+      'success',
+      '¡Registro casi completado! Por favor, revisa tu correo para verificar tu cuenta antes de votar.'
+    )
+
+    // Enviar correo de verificación (sin bloquear la respuesta)
+    mail
+      .sendLater((message) => {
+        message
+          .to(user.email!)
+          .subject('Verifica tu correo - Códigos de Oro')
+          .htmlView('emails/verify_email', {
+            user,
+            url: `${env.get('APP_URL', 'http://localhost:3333')}/verify-email?token=${verificationToken}&email=${user.email}`,
+          })
+      })
+      .catch((error: any) => {
+        console.error('Error enviando email:', error)
+      })
+
+    // Autenticar automáticamente (pero con acceso restringido por middleware)
     await auth.use('web').login(user)
 
     return response.redirect('/votacion')
   }
 
-  async showLogin({ view, response }: HttpContext) {
+  async verifyEmail({ request, response, session }: HttpContext) {
+    const { token, email } = request.all()
+
+    const user = await User.query()
+      .where('email', email)
+      .where('emailVerificationToken', token)
+      .first()
+
+    if (!user) {
+      session.flash('error', 'El enlace de verificación es inválido o ha expirado.')
+      return response.redirect('/login')
+    }
+
+    user.isVerified = true
+    user.emailVerificationToken = null
+    await user.save()
+
+    session.flash('success', '¡Cuenta verificada correctamente! Ya puedes participar en las votaciones.')
+    return response.redirect('/votacion')
+  }
+
+  async showLogin({ view }: HttpContext) {
     const oidcModule = await import('#config/oidc')
     const oidcConfig = oidcModule.default
-    if (oidcConfig.enabled) {
-      return this.oidcRedirect({ response } as any)
-    }
-    return view.render('pages/login')
+    return view.render('pages/login', { oidcEnabled: oidcConfig.enabled })
   }
 
   async login({ request, response, auth, session }: HttpContext) {

@@ -99,6 +99,24 @@
         </h2>
 
         <!-- Mensajes Flash -->
+        @if(!user.isVerified)
+          <div class="alert alert-warning border-warning shadow-sm mb-4" role="alert">
+            <div class="d-flex">
+              <div class="me-3">
+                <i class="fa-solid fa-envelope-circle-check fs-2"></i>
+              </div>
+              <div>
+                <h5 class="alert-heading">Verificación de correo pendiente</h5>
+                <p class="mb-0">
+                  Hemos enviado un enlace de verificación a <strong>{{ user.email }}</strong>. 
+                  Debes confirmar tu cuenta para poder emitir votos. 
+                  Si no lo has recibido, revisa tu carpeta de spam.
+                </p>
+              </div>
+            </div>
+          </div>
+        @endif
+
         @if(flashMessages.has('error'))
           <div class="alert alert-danger alert-dismissible fade show">
             {{ flashMessages.get('error') }}

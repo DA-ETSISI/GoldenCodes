@@ -561,15 +561,17 @@
                         </button>
                     </form>
 
-                    <div class="divider">
-                        <span>o accede con tu cuenta UPM</span>
-                    </div>
+                    @if(oidcEnabled)
+                        <div class="divider">
+                            <span>o accede con tu cuenta UPM</span>
+                        </div>
 
-                    <a href="/auth/oidc/redirect" class="btn-siu" id="btn-siu-upm">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        Entrar con SIU UPM
-                        <span class="siu-badge">UPM</span>
-                    </a>
+                        <a href="/auth/oidc/redirect" class="btn-siu" id="btn-siu-upm">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            Entrar con SIU UPM
+                            <span class="siu-badge">UPM</span>
+                        </a>
+                    @endif
 
                     <div class="security-note">
                         <i class="fa-solid fa-lock"></i>
