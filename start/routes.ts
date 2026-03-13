@@ -28,6 +28,12 @@ router
       'oidcCallback',
     ])
     router.get('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail'])
+
+    // Password recovery
+    router.get('/forgot-password', [() => import('#controllers/auth_controller'), 'showForgotPassword'])
+    router.post('/forgot-password', [() => import('#controllers/auth_controller'), 'sendResetLink'])
+    router.get('/reset-password', [() => import('#controllers/auth_controller'), 'showResetPassword'])
+    router.post('/reset-password', [() => import('#controllers/auth_controller'), 'updatePassword'])
   })
   .use(middleware.guest())
 
@@ -43,6 +49,8 @@ router
       middleware.verified()
     )
     router.get('/mi-voto', [() => import('#controllers/users_controller'), 'myVote'])
+    router.get('/change-password', [() => import('#controllers/auth_controller'), 'showChangePassword'])
+    router.post('/change-password', [() => import('#controllers/auth_controller'), 'changePassword']).as('changePassword')
   })
   .use(middleware.auth())
 

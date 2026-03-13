@@ -4,6 +4,8 @@ import hash from '@adonisjs/core/services/hash'
 import crypto from 'node:crypto'
 import mail from '@adonisjs/mail/services/main'
 import env from '#start/env'
+import db from '@adonisjs/lucid/services/db'
+import { DateTime } from 'luxon'
 
 export default class AuthController {
   async showRegister({ view }: HttpContext) {
@@ -220,5 +222,105 @@ export default class AuthController {
       session.flash('error', 'Error en la autenticación OIDC.')
       return response.redirect('/login')
     }
+  }
+
+  async showChangePassword({ view }: HttpContext) {
+    return view.render('pages/change_password')
+  }
+
+  async changePassword({ request, response, auth, session }: HttpContext) {
+    const { currentPassword, newPassword } = request.all()
+    const user = auth.user!
+
+    // Verify current password
+    const isValid = await hash.verify(user.password, currentPassword)
+    if (!isValid) {
+      session.flash('error', 'La contraseña actual es incorrecta.')
+      return response.redirect().back()
+    }
+
+    // Update password
+    user.password = newPassword
+    await user.save()
+
+    session.flash('success', 'Tu contraseña ha sido actualizada correctamente.')
+    return response.redirect('/votacion')
+  }
+
+  async showForgotPassword({ view }: HttpContext) {
+    return view.render('pages/forgot_password')
+  }
+
+  async sendResetLink({ request, response, session }: HttpContext) {
+    const email = request.input('email')
+    const user = await User.findBy('email', email)
+
+    if (!user) {
+      session.flash('error', 'No encontramos ningún usuario con ese correo electrónico.')
+      return response.redirect().back()
+    }
+
+    // Generate token
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiresAt = DateTime.now().plus({ hours: 1 })
+
+    // Save token
+    await db.table('password_reset_tokens').insert({
+      email,
+      token,
+      expires_at: expiresAt.toFormat('yyyy-MM-dd HH:mm:ss'),
+      created_at: DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'),
+    })
+
+    // Send email
+    mail.sendLater((message) => {
+      message
+        .to(email)
+        .subject('Recuperar contraseña - Códigos de Oro')
+        .htmlView('emails/reset_password', {
+          user: user,
+          url: `${env.get('APP_URL', 'http://localhost:3333')}/reset-password?token=${token}&email=${email}`,
+        })
+    }).catch(err => console.error('Error sending reset email:', err))
+
+    session.flash('success', 'Te hemos enviado un enlace de recuperación a tu correo.')
+    return response.redirect().back()
+  }
+
+  async showResetPassword({ request, view }: HttpContext) {
+    const { token, email } = request.all()
+    return view.render('pages/reset_password', { token, email })
+  }
+
+  async updatePassword({ request, response, session }: HttpContext) {
+    const { token, email, password } = request.all()
+
+    const resetToken = await db
+      .from('password_reset_tokens')
+      .where('email', email)
+      .where('token', token)
+      .where('expires_at', '>', DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'))
+      .first()
+
+    if (!resetToken) {
+      session.flash('error', 'El enlace es inválido o ha expirado.')
+      return response.redirect('/forgot-password')
+    }
+
+    const user = await User.findBy('email', email)
+    if (!user) {
+      session.flash('error', 'Usuario no encontrado.')
+      return response.redirect('/forgot-password')
+    }
+
+    // Update password
+    user.password = password
+    await user.save()
+
+    // Delete token
+    await db.from('password_reset_tokens').where('email', email).delete()
+
+    session.flash('success', 'Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.')
+    return response.redirect('/login')
   }
 }

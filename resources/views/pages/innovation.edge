@@ -70,10 +70,55 @@
         <a class="navbar-brand fs-4" href="/">
           <i class="fa-solid fa-trophy me-2"></i>Códigos de Oro
         </a>
-        <div class="ms-auto">
-            <a href="/" class="btn btn-outline-warning px-4">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item">
+              <a class="btn btn-outline-warning px-4" href="/">
                 <i class="fa-solid fa-arrow-left me-2"></i>Volver al Inicio
-            </a>
+              </a>
+            </li>
+            @if(auth.user)
+              <li class="nav-item dropdown ms-lg-3">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-user me-1"></i>{{ auth.user.nombre }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <h6 class="dropdown-header">
+                      {{ auth.user.email }}
+                    </h6>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/mi-voto">
+                      <i class="fa-solid fa-check-to-slot me-2"></i>Ver mi voto
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="/change-password">
+                      <i class="fa-solid fa-key me-2"></i>Cambiar Contraseña
+                    </a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <form action="/logout" method="POST">
+                      {{ csrfField() }}
+                      <button type="submit" class="dropdown-item">
+                        <i class="fa-solid fa-right-from-bracket me-2"></i>Cerrar Sesión
+                      </button>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+            @endif
+          </ul>
         </div>
       </div>
     </nav>
