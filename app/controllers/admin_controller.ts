@@ -1,6 +1,8 @@
 import env from '#start/env'
 import type { HttpContext } from '@adonisjs/core/http'
 import Participante from '#models/participante'
+import hash from '@adonisjs/core/services/hash'
+import { scryptSync, timingSafeEqual } from 'node:crypto'
 
 export default class AdminController {
   async index({ view, request }: HttpContext) {
@@ -43,14 +45,28 @@ export default class AdminController {
     return view.render('pages/admin_login')
   }
 
+  /**
+   * Compare two strings in constant time to prevent timing attacks.
+   */
+  private secureCompare(a: string, b: string): boolean {
+    const bufA = scryptSync(a, 'static-salt-for-timing', 32)
+    const bufB = scryptSync(b, 'static-salt-for-timing', 32)
+    return timingSafeEqual(bufA, bufB)
+  }
+
   async login({ request, response, session }: HttpContext) {
     const { username, password } = request.all()
 
-    // Validation of credentials using environment variables
     const adminUser = env.get('ADMIN_USER')
-    const adminPass = env.get('ADMIN_PASSWORD')
+    // The hash is stored Base64-encoded in .env to avoid $ signs being interpolated by the env parser
+    const adminHashB64 = env.get('ADMIN_PASSWORD')
+    const adminHash = adminHashB64 ? Buffer.from(adminHashB64, 'base64').toString('utf8') : null
 
-    if (username === adminUser && password === adminPass) {
+    // Use secureCompare for username and hash.verify for password
+    const isUserValid = this.secureCompare(username || '', adminUser || '')
+    const isPasswordValid = adminHash ? await hash.verify(adminHash, password || '') : false
+
+    if (isUserValid && isPasswordValid) {
       session.put('isAdmin', true)
       return response.redirect('/admin')
     }

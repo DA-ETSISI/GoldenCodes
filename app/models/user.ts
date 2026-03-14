@@ -34,7 +34,7 @@ export default class User extends BaseModel {
   @column()
   declare isVerified: boolean
 
-  @column()
+  @column({ serializeAs: null })
   declare emailVerificationToken: string | null
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })

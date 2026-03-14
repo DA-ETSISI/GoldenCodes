@@ -15,15 +15,17 @@ export default class AuthController {
   async register({ request, response, auth, session }: HttpContext) {
     const { nombre, email, password } = request.all()
 
+    const normalizedEmail = email.toLowerCase().trim()
+
     // Validar dominio del email
-    const esEmailValido = email.endsWith('@upm.es') || email.endsWith('@alumnos.upm.es')
+    const esEmailValido = normalizedEmail.endsWith('@upm.es') || normalizedEmail.endsWith('@alumnos.upm.es')
     if (!esEmailValido) {
       session.flash('error', 'Solo se permiten correos @upm.es o @alumnos.upm.es.')
       return response.redirect().back()
     }
 
     // Validar que el email no esté registrado
-    const existingUser = await User.findBy('email', email)
+    const existingUser = await User.findBy('email', normalizedEmail)
     if (existingUser) {
       session.flash('error', 'Este correo electrónico ya está registrado.')
       return response.redirect().back()
@@ -35,7 +37,7 @@ export default class AuthController {
     // Crear el usuario
     const user = await User.create({
       nombre,
-      email,
+      email: normalizedEmail,
       password,
       emailVerificationToken: verificationToken,
       isVerified: false,
@@ -57,8 +59,8 @@ export default class AuthController {
             url: `${env.get('APP_URL')}/verify-email?token=${verificationToken}&email=${user.email}`,
           })
       })
-      .catch((error: any) => {
-        console.error('Error enviando email:', error)
+      .catch(() => {
+
       })
 
     // Autenticar automáticamente (pero con acceso restringido por middleware)
@@ -70,12 +72,31 @@ export default class AuthController {
   async verifyEmail({ request, response, session }: HttpContext) {
     const { token, email } = request.all()
 
+    if (!email || !token) {
+      session.flash('error', 'Enlace de verificación incompleto.')
+      return response.redirect('/login')
+    }
+
+    const normalizedEmail = email.toLowerCase().trim()
+
+    // Buscar el usuario por email y token
     const user = await User.query()
-      .where('email', email)
+      .where('email', normalizedEmail)
       .where('emailVerificationToken', token)
       .first()
 
     if (!user) {
+      // Verificar si ya está verificado (posible pre-click de escáner de correo)
+      const alreadyVerified = await User.query()
+        .where('email', normalizedEmail)
+        .where('isVerified', true)
+        .first()
+
+      if (alreadyVerified) {
+        session.flash('success', '¡Tu cuenta ya ha sido verificada! Ya puedes participar.')
+        return response.redirect('/votacion')
+      }
+
       session.flash('error', 'El enlace de verificación es inválido o ha expirado.')
       return response.redirect('/login')
     }
@@ -98,7 +119,8 @@ export default class AuthController {
     const { email, password } = request.all()
 
     try {
-      const user = await User.findBy('email', email)
+      const normalizedEmail = email.toLowerCase().trim()
+      const user = await User.findBy('email', normalizedEmail)
 
       if (!user) {
         session.flash('error', 'Credenciales incorrectas.')
@@ -218,7 +240,7 @@ export default class AuthController {
       session.flash('success', `¡Bienvenido ${user.nombre}!`)
       return response.redirect('/votacion')
     } catch (error) {
-      console.error('OIDC Error:', error)
+
       session.flash('error', 'Error en la autenticación OIDC.')
       return response.redirect('/login')
     }
@@ -253,7 +275,12 @@ export default class AuthController {
 
   async sendResetLink({ request, response, session }: HttpContext) {
     const email = request.input('email')
-    const user = await User.findBy('email', email)
+    if (!email) {
+      session.flash('error', 'El correo electrónico es obligatorio.')
+      return response.redirect().back()
+    }
+    const normalizedEmail = email.toLowerCase().trim()
+    const user = await User.findBy('email', normalizedEmail)
 
     if (!user) {
       session.flash('error', 'No encontramos ningún usuario con ese correo electrónico.')
@@ -266,7 +293,7 @@ export default class AuthController {
 
     // Save token
     await db.table('password_reset_tokens').insert({
-      email,
+      email: normalizedEmail,
       token,
       expires_at: expiresAt.toFormat('yyyy-MM-dd HH:mm:ss'),
       created_at: DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'),
@@ -275,13 +302,13 @@ export default class AuthController {
     // Send email
     mail.sendLater((message) => {
       message
-        .to(email)
+        .to(normalizedEmail)
         .subject('Recuperar contraseña - Códigos de Oro')
         .htmlView('emails/reset_password', {
           user: user,
-          url: `${env.get('APP_URL')}/reset-password?token=${token}&email=${email}`,
+          url: `${env.get('APP_URL')}/reset-password?token=${token}&email=${normalizedEmail}`,
         })
-    }).catch(err => console.error('Error sending reset email:', err))
+    }).catch(() => {})
 
     session.flash('success', 'Te hemos enviado un enlace de recuperación a tu correo.')
     return response.redirect().back()
@@ -295,9 +322,12 @@ export default class AuthController {
   async updatePassword({ request, response, session }: HttpContext) {
     const { token, email, password } = request.all()
 
+    if (!email) return response.redirect('/forgot-password')
+    const normalizedEmail = email.toLowerCase().trim()
+
     const resetToken = await db
       .from('password_reset_tokens')
-      .where('email', email)
+      .where('email', normalizedEmail)
       .where('token', token)
       .where('expires_at', '>', DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'))
       .first()
@@ -307,7 +337,7 @@ export default class AuthController {
       return response.redirect('/forgot-password')
     }
 
-    const user = await User.findBy('email', email)
+    const user = await User.findBy('email', normalizedEmail)
     if (!user) {
       session.flash('error', 'Usuario no encontrado.')
       return response.redirect('/forgot-password')
@@ -318,7 +348,7 @@ export default class AuthController {
     await user.save()
 
     // Delete token
-    await db.from('password_reset_tokens').where('email', email).delete()
+    await db.from('password_reset_tokens').where('email', normalizedEmail).delete()
 
     session.flash('success', 'Tu contraseña ha sido restablecida correctamente. Ya puedes iniciar sesión.')
     return response.redirect('/login')

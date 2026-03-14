@@ -11,7 +11,7 @@ export default class Participante extends BaseModel {
   @column()
   declare categoria: string
 
-  @column()
+  @column({ serializeAs: null })
   declare numero_votos: number
 
   @column.dateTime({ autoCreate: true })

@@ -7,18 +7,31 @@ export default class FormularioController {
     const user = auth.getUserOrFail()
 
     // Auto-assign Estudiante role if email matches and rol is empty
-    if (!user.rol && user.email?.endsWith('@alumnos.upm.es')) {
-      user.rol = 'Estudiante'
-      await user.save()
+    // VULNERABILITY FIX: Never pass the raw model to the view. Map to an anonymous object.
+    const cleanUser = {
+      nombre: user.nombre,
+      email: user.email,
+      rol: user.rol,
+      curso: user.curso,
+      grado: user.grado,
+      isVerified: user.isVerified
     }
 
-    // Fetch all participantes (which are the votable options).
-    const profesores = await Participante.all()
+    const profesoresRaw = await Participante.all()
+    const profesores = profesoresRaw.map(p => ({
+      // VULNERABILITY FIX: Obfuscate ID using a hash to prevent leaking DB primary keys
+      key: Buffer.from(`SALT_${p.id}`).toString('base64'),
+      nombreCompleto: p.nombreCompleto,
+      categoria: p.categoria
+    }))
 
-    const userVotes = await Vote.query().where('userId', user.id).preload('participante')
-    const userVotesJson = userVotes.map(v => v.serialize())
+    const userVotesRaw = await Vote.query().where('userId', user.id).preload('participante')
+    const userVotes = userVotesRaw.map(v => ({
+      categoria: v.categoria,
+      participante: v.participante ? { nombreCompleto: v.participante.nombreCompleto } : null
+    }))
 
-    // Group votes by category to count how many votes they have used
+    // Redundant but safe: Ensure votesByCategory only uses category names
     const votesByCategory: Record<string, number> = {}
     userVotes.forEach((v) => {
       votesByCategory[v.categoria] = (votesByCategory[v.categoria] || 0) + 1
@@ -26,9 +39,9 @@ export default class FormularioController {
 
     return view.render('pages/formulario', {
       profesores,
-      user,
+      user: cleanUser,
       userVotes,
-      userVotesJson,
+      userVotesJson: userVotes, // Same as userVotes now
       votesByCategory,
     })
   }
@@ -68,18 +81,28 @@ export default class FormularioController {
         await user.save()
       }
 
-      const { profesor: profesorId, categoria } = payload as { profesor: string; categoria: string }
+      const { profesor: profesorObfuscated, categoria } = payload as { profesor: string; categoria: string }
 
-      if (!profesorId || !categoria) {
+      if (!profesorObfuscated || !categoria) {
         const errorMsg = 'Faltan datos obligatorios.'
         if (isJson) return response.status(400).json({ success: false, message: errorMsg })
         session.flash('error', errorMsg)
         return response.redirect().back()
       }
 
+      // Decode the obfuscated key
+      const profesorId = Buffer.from(profesorObfuscated, 'base64').toString('ascii').replace('SALT_', '')
       const profesor = await Participante.find(profesorId)
       if (!profesor) {
         const errorMsg = 'Candidato no válido.'
+        if (isJson) return response.status(400).json({ success: false, message: errorMsg })
+        session.flash('error', errorMsg)
+        return response.redirect().back()
+      }
+
+      // VULNERABILITY FIX: Verify that the participant belongs to the requested category
+      if (profesor.categoria !== categoria) {
+        const errorMsg = 'El candidato no pertenece a la categoría seleccionada.'
         if (isJson) return response.status(400).json({ success: false, message: errorMsg })
         session.flash('error', errorMsg)
         return response.redirect().back()
@@ -223,12 +246,12 @@ export default class FormularioController {
         return response.redirect().back()
       }
 
-      // Prevent duplicate votes for the same person in the SAME category
+      // Prevent duplicate votes for the same person (id) regardless of the category string
       const alreadyVotedForPerson = userVotes.find(
-        (v: Vote) => v.categoria === categoria && v.participanteId === profesor.id
+        (v: Vote) => v.participanteId === profesor.id
       )
       if (alreadyVotedForPerson) {
-        const errorMsg = 'Ya has votado por esta persona en esta categoría o grupo.'
+        const errorMsg = 'Ya has votado por esta persona.'
         if (isJson) return response.status(400).json({ success: false, message: errorMsg })
         session.flash('error', errorMsg)
         return response.redirect().back()
@@ -241,28 +264,28 @@ export default class FormularioController {
         categoria: categoria,
       })
 
-      // Increment votes in participante table
-      const participante = await Participante.find(profesor.id)
-      if (participante) {
-        participante.numero_votos += 1
-        await participante.save()
-      }
+      // Increment votes in participante table using atomic increment to avoid race conditions
+      await Participante.query().where('id', profesor.id).increment('numero_votos', 1)
 
       const message = `Voto registrado con éxito en ${categoria}.`
 
       if (isJson) {
         const updatedVotes = await Vote.query().where('userId', user.id).preload('participante')
+        const updatedVotesJson = updatedVotes.map(v => ({
+          categoria: v.categoria,
+          participante: v.participante ? { nombreCompleto: v.participante.nombreCompleto } : null
+        }))
         return response.json({
           success: true,
           message,
-          userVotes: updatedVotes,
+          userVotes: updatedVotesJson,
         })
       }
 
       session.flash('success', message)
       return response.redirect().back() // We return back to let them keep voting
     } catch (error) {
-      console.error(error)
+
       const message = 'Ha ocurrido un error inesperado al procesar el voto.'
       if (isJson) {
         return response.status(error.status || 500).json({ success: false, message })

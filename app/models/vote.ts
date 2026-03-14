@@ -8,7 +8,7 @@ export default class Vote extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column()
+  @column({ serializeAs: null })
   declare userId: number
 
   @column()

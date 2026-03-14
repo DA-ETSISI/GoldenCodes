@@ -183,8 +183,6 @@
                           <span class="text-muted">                            <i class="fa-solid fa-check text-success"></i>
                             @if(v.participante)
                               {{ v.participante.nombreCompleto }}
-                            @else
-                              ID: {{ v.participanteId }}
                             @endif
                           </span>
                         </li>
@@ -693,7 +691,7 @@
                           throw new Error(json.message || "Error en el servidor");
                       } else {
                           const text = await response.text();
-                          console.error("Non-JSON error response", text);
+
                           throw new Error("El servidor devolvió una respuesta inesperada (HTML). Posible error de sesión o CSRF.");
                       }
                   }
@@ -759,7 +757,7 @@
                       alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                   }
               } catch (error) {
-                  console.error(error);
+
                   const alertDiv = document.createElement("div");
                   alertDiv.className = "alert alert-danger alert-dismissible fade show mt-3";
                   alertDiv.innerHTML = `<strong>Error:</strong> ${error.message || "Error de conexión al enviar el voto"}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
@@ -855,10 +853,10 @@
           // Populate Profesores based on category
           selectProfesor.innerHTML = '<option value="" disabled selected>Elige a un candidato</option>';
           selectProfesor.disabled = false;
-          allProfesores.filter(p => p.categoria === catName).sort((a, b) => (a.nombreCompleto ?? a.nombre_completo ?? "").localeCompare(b.nombreCompleto ?? b.nombre_completo ?? "")).forEach(p => {
+          allProfesores.filter(p => p.categoria === catName).sort((a, b) => (a.nombreCompleto ?? "").localeCompare(b.nombreCompleto ?? "")).forEach(p => {
             const option = document.createElement("option");
-            option.value = p.id;
-            option.textContent = p.nombreCompleto ?? p.nombre_completo;
+            option.value = p.key;
+            option.textContent = p.nombreCompleto;
             selectProfesor.appendChild(option);
           });
         });

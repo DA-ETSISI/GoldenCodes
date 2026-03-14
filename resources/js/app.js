@@ -1,1 +1,1 @@
-console.log('Hello World')
+// Main entry point for JavaScript

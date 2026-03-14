@@ -42,8 +42,8 @@ export default class PasswordResetController {
                         url: `${env.get('APP_URL')}/reset-password?token=${token}&email=${email}`,
                     })
             })
-            .catch((error: any) => {
-                console.error('Error enviando email de recuperación:', error)
+            .catch(() => {
+
             })
 
         session.flash(

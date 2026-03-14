@@ -27,7 +27,6 @@ router
       () => import('#controllers/auth_controller'),
       'oidcCallback',
     ])
-    router.get('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail'])
 
     // Password recovery
     router.get('/forgot-password', [() => import('#controllers/auth_controller'), 'showForgotPassword'])
@@ -36,6 +35,8 @@ router
     router.post('/reset-password', [() => import('#controllers/auth_controller'), 'updatePassword'])
   })
   .use(middleware.guest())
+
+router.get('/verify-email', [() => import('#controllers/auth_controller'), 'verifyEmail'])
 
 router
   .post('/logout', [() => import('#controllers/auth_controller'), 'logout'])
