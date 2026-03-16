@@ -179,7 +179,7 @@
                   @if(participantes.length > 5)
                     <button
                       class="btn btn-outline-dark btn-sm toggle-btn"
-                      data-categoria="{{ categoria.replace(/\s+/g, '-') }}"
+                      data-categoria="{{ categoria.replace(/[^a-zA-Z0-9]/g, '-') }}"
                     >
                       <i class="fa-solid fa-plus me-1"></i>Ver más
                                     </button>
@@ -204,7 +204,7 @@
                       <tbody>
                         @each((p, index) in participantes)
                           <tr
-                            class="{{ index === 0 && p.numero_votos > 0 ? 'table-warning fw-bold' : '' }} {{ index >= 5 ? 'd-none extra-row-' + categoria.replace(/\s+/g, '-') : '' }}"
+                            class="{{ index === 0 && p.numero_votos > 0 ? 'table-warning fw-bold' : '' }} {{ index >= 5 ? 'd-none extra-row-' + categoria.replace(/[^a-zA-Z0-9]/g, '-') : '' }}"
                           >
                             <td class="ps-4">
                               @if(index === 0 && p.numero_votos > 0)
