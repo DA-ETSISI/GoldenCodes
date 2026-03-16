@@ -1,8 +1,7 @@
 import env from '#start/env'
 import type { HttpContext } from '@adonisjs/core/http'
 import Participante from '#models/participante'
-import hash from '@adonisjs/core/services/hash'
-import { scryptSync, timingSafeEqual } from 'node:crypto'
+import { createHash, timingSafeEqual } from 'node:crypto'
 
 export default class AdminController {
   async index({ view, request }: HttpContext) {
@@ -47,30 +46,34 @@ export default class AdminController {
 
   /**
    * Compare two strings in constant time to prevent timing attacks.
+   * SHA-256 normalizes both strings to the same byte length first,
+   * so timingSafeEqual never throws on different-length inputs.
    */
-  private secureCompare(a: string, b: string): boolean {
-    const bufA = scryptSync(a, 'static-salt-for-timing', 32)
-    const bufB = scryptSync(b, 'static-salt-for-timing', 32)
-    return timingSafeEqual(bufA, bufB)
+  private timingSafeStringEqual(a: string, b: string): boolean {
+    const hashA = createHash('sha256').update(a).digest()
+    const hashB = createHash('sha256').update(b).digest()
+    return timingSafeEqual(hashA, hashB)
   }
 
-  async login({ request, response, session }: HttpContext) {
+  async login({ request, response, session, logger }: HttpContext) {
     const { username, password } = request.all()
 
     const adminUser = env.get('ADMIN_USER')
-    // The hash is stored Base64-encoded in .env to avoid $ signs being interpolated by the env parser
-    const adminHashB64 = env.get('ADMIN_PASSWORD')
-    const adminHash = adminHashB64 ? Buffer.from(adminHashB64, 'base64').toString('utf8') : null
+    const adminPassword = env.get('ADMIN_PASSWORD')
 
-    // Use secureCompare for username and hash.verify for password
-    const isUserValid = this.secureCompare(username || '', adminUser || '')
-    const isPasswordValid = adminHash ? await hash.verify(adminHash, password || '') : false
+    // Both username and password are compared in constant time using sha256-normalized
+    // timingSafeEqual — this prevents timing attacks without needing to store a hash.
+    // The .env file itself must be kept secret (it already holds DB credentials, APP_KEY, etc.)
+    const isUserValid = this.timingSafeStringEqual(username || '', adminUser || '')
+    const isPasswordValid = this.timingSafeStringEqual(password || '', adminPassword || '')
 
     if (isUserValid && isPasswordValid) {
+      logger.info({ msg: 'Admin login successful' })
       session.put('isAdmin', true)
       return response.redirect('/admin')
     }
 
+    logger.warn({ msg: 'Admin login failed', username: username || '(empty)' })
     session.flash('error', 'Credenciales incorrectas.')
     return response.redirect().back()
   }
