@@ -98,6 +98,33 @@
           </div>
         </div>
 
+        <div class="row mb-5">
+          <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+              <div class="card-body">
+                <h6 class="text-muted fw-bold mb-1">Personas que han votado</h6>
+                <h3 class="mb-0 text-white">{{ totalVoters }}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3 mb-md-0">
+            <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+              <div class="card-body">
+                <h6 class="text-muted fw-bold mb-1">Votantes @upm.es</h6>
+                <h3 class="mb-0 text-white">{{ upmVoters }}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card shadow-sm border-0 border-start border-info border-4 h-100">
+              <div class="card-body">
+                <h6 class="text-muted fw-bold mb-1">Votantes @alumnos.upm.es</h6>
+                <h3 class="mb-0 text-white">{{ alumnosVoters }}</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
         @if(searchEmail)
           <div class="row mb-5">
             <div class="col-12">

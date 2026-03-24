@@ -6,6 +6,7 @@ import mail from '@adonisjs/mail/services/main'
 import env from '#start/env'
 import db from '@adonisjs/lucid/services/db'
 import { DateTime } from 'luxon'
+import logger from '@adonisjs/core/services/logger'
 
 export default class AuthController {
   async showRegister({ view }: HttpContext) {
@@ -172,8 +173,8 @@ export default class AuthController {
     const url = client.buildAuthorizationUrl(server, {
       scope: oidcConfig.scopes,
       redirect_uri: oidcConfig.redirectUri!,
-      codeChallenge,
-      codeChallengeMethod: 'S256',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
     })
 
     return response.redirect(url.href)
@@ -214,6 +215,9 @@ export default class AuthController {
       }
       const userInfo = await client.fetchUserInfo(server, tokenSet.access_token, claims.sub)
 
+      // Se imprime con el formato nativo del servidor (Pino JSON logger)
+      logger.info({ oidc_data: userInfo }, 'Login OIDC completado')
+
       // Find or create user
       const email = userInfo.email
       const name = userInfo.name || userInfo.preferred_username || 'OIDC User'
@@ -240,6 +244,8 @@ export default class AuthController {
       session.flash('success', `¡Bienvenido ${user.nombre}!`)
       return response.redirect('/votacion')
     } catch (error) {
+      // El logger del servidor imprimirá el error de Pino en caso de que esté fallando
+      logger.error(error)
 
       session.flash('error', 'Error en la autenticación OIDC.')
       return response.redirect('/login')

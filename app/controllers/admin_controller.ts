@@ -32,11 +32,22 @@ export default class AdminController {
       groupedResults[p.categoria].push(p)
     })
 
+    // 3. Count Voters
+    const UserClass = (await import('#models/user')).default
+    const voters = await UserClass.query().preload('votes')
+    const actualVoters = voters.filter(u => u.votes && u.votes.length > 0)
+    const totalVoters = actualVoters.length
+    const upmVoters = actualVoters.filter(u => u.email?.toLowerCase().endsWith('@upm.es')).length
+    const alumnosVoters = actualVoters.filter(u => u.email?.toLowerCase().endsWith('@alumnos.upm.es')).length
+
     return view.render('pages/admin', {
       groupedResults,
       searchedUser,
       userVotes,
       searchEmail,
+      totalVoters,
+      upmVoters,
+      alumnosVoters,
     })
   }
 
